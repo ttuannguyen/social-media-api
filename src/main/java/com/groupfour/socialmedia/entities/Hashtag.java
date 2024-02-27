@@ -5,6 +5,8 @@ import java.sql.Timestamp;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToOne;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -19,5 +21,9 @@ public class Hashtag {
 	private String label;
 	private Timestamp firstUsed;
 	private Timestamp lastUsed;
+	
+	@ManyToOne
+	@JoinTable(name="tweet_hashtags")
+	private Tweet tweet;
 
 }

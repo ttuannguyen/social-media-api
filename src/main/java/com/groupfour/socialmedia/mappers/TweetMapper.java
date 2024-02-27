@@ -9,7 +9,7 @@ import com.groupfour.socialmedia.entities.Tweet;
 
 import org.mapstruct.Mapper;
 
-@Mapper(componentModel = "spring")                  // add a uses = {...} here?
+@Mapper(componentModel = "spring", uses= {UserMapper.class})                  // add a uses = {...} here?
 public interface TweetMapper {
 
     TweetResponseDto entityToDto(Tweet entity);

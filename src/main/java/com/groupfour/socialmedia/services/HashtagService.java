@@ -6,6 +6,7 @@ import com.groupfour.socialmedia.dtos.HashtagResponseDto;
 
 public interface HashtagService {
 
-	
+	public List<HashtagResponseDto> getAllHashtags();
+		
 	
 }

@@ -2,6 +2,9 @@ package com.groupfour.socialmedia.entities;
 
 import java.sql.Timestamp;
 import java.util.List;
+
+import org.hibernate.annotations.CreationTimestamp;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.util.ArrayList;
@@ -11,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.JoinColumn;
 
 @Entity
@@ -26,14 +30,17 @@ public class Tweet {
     @JoinColumn(name = "user_id")
     private User author;
 
+    @CreationTimestamp
     private Timestamp posted;
 
     private String content;
-
-    @JoinColumn(name = "tweet_id")
+    
+    @ManyToOne
+    @JoinColumn(name = "inReplyTo")
     private Tweet inReplyTo;
-
-    @JoinColumn(name = "tweet_id")
+    
+    @ManyToOne
+    @JoinColumn(name = "repostOf")
     private Tweet repostOf;
 	
 	@ManyToMany(mappedBy="likedTweets")
@@ -44,5 +51,10 @@ public class Tweet {
 	joinColumns = @JoinColumn(name="tweet_id"),
 	inverseJoinColumns = @JoinColumn(name="user_id"))
 	private List<User> mentionedUsers = new ArrayList<>();
+	
+	private boolean deleted = false;
+	
+	@OneToMany(mappedBy="tweet")
+	private List<Hashtag> hashtags;
 
 }
