@@ -48,7 +48,7 @@ public class User {
 	@ManyToMany(mappedBy="followers")
 	private List<User> follower = new ArrayList<>();
 	
-	@OneToMany(mappedBy="user")
+	@OneToMany(mappedBy="author")
 	private List<Tweet> tweets;
 	
 	@ManyToMany

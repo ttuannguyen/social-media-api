@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,10 @@ public class Tweet {
 	@Id
 	@GeneratedValue
 	private Long id;
+	
+	@ManyToOne
+	@JoinColumn(name = "user_id")
+	private User author;
 	
 	@ManyToMany(mappedBy="likedTweets")
 	private List<User> likedByUsers = new ArrayList<>();
