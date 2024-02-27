@@ -11,11 +11,11 @@ import lombok.NoArgsConstructor;
 @Embeddable
 @Data
 @NoArgsConstructor
-public class Credentials {
+public class Profile {
 
-
-	@Column(nullable=false, unique=true)
-	private String username;
+	private String firstName;
+	private String lastName;
 	@Column(nullable=false)
-	private String password;
+	private String email;
+	private String phone;
 }
