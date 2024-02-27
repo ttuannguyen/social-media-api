@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @Data
-public class HashTag {
+public class Hashtag {
 	
 	@Id
 	@GeneratedValue
