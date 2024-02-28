@@ -3,14 +3,10 @@ package com.groupfour.socialmedia.entities;
 import java.sql.Timestamp;
 import java.util.List;
 
+import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToOne;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -29,9 +25,11 @@ public class Hashtag {
 	
 	@UpdateTimestamp
 	private Timestamp lastUsed;
-	
-	@ManyToOne
-	@JoinTable(name="tweet_hashtags")
+
+	@ManyToMany
+	@JoinTable(name="tweet_hashtags",
+			joinColumns = @JoinColumn(name="hashtag_id"),
+			inverseJoinColumns = @JoinColumn(name="tweet_id"))
 	private List<Tweet> taggedTweets;
 
 }

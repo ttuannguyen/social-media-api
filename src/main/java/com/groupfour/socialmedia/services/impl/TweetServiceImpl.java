@@ -68,11 +68,7 @@ public class TweetServiceImpl implements TweetService {
         List<Tweet> allReposts = new ArrayList<>();
         for (Tweet t : allTweets)
         {
-            if (t.getRepostOf() == null)
-            {
-                continue;
-            }
-            if ( (t.getRepostOf().getId() == id) && (!t.isDeleted())) {
+            if (!t.isDeleted()) {
                 allReposts.add(t);
             }
         }
