@@ -14,9 +14,7 @@ public class TweetRequestDto {
 
     private String content;
 
-    private TweetRequestDto inReplyTo;
-
-    private TweetRequestDto repostOf;
+    
 
 }
 

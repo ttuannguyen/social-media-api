@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class UserResponseDto {
-	private Long id;
+
 	private String username;
-	private Profile profile;
+	private ProfileDto profile;
 	private Timestamp joined;
 }

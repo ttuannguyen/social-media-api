@@ -42,7 +42,13 @@ public class Tweet {
     @ManyToOne
     @JoinColumn(name = "repostOf")
     private Tweet repostOf;
+    
+    @OneToMany(mappedBy = "inReplyTo")
+    private List<Tweet> replies;
 	
+    @OneToMany(mappedBy = "repostOf")
+    private List<Tweet> reposts;
+    
 	@ManyToMany(mappedBy="likedTweets")
 	private List<User> likedByUsers = new ArrayList<>();
 	
@@ -54,7 +60,7 @@ public class Tweet {
 	
 	private boolean deleted = false;
 	
-	@OneToMany(mappedBy="tweet")
+	@OneToMany(mappedBy="taggedTweets")
 	private List<Hashtag> hashtags;
 
 }
