@@ -15,5 +15,11 @@ public class ValidateController {
 	
 	private ValidateService validateService;
 	
+	@GetMapping("username/available/@{username}")
+	public boolean valdateUsername(@PathVariable String username) {
+		return validateService.validateUsername(username);
+	}
+	
+	
 
 }
