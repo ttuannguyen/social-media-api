@@ -23,6 +23,13 @@ public class TweetServiceImpl implements TweetService {
     private final TweetMapper tweetMapper;
 
 
+    private Tweet getTweetEntity(Long id) {
+    	Optional<Tweet> tweet = tweetRepository.findByIdAndDeletedFalse(id);
+    	if (tweet.isEmpty()) {
+    		throw new BadRequestException("No tweet found with id: " + id);
+    	}
+    	return tweet.get();
+    }
     @Override
     public List<TweetResponseDto> getAllTweets() {
         return tweetMapper.entitiesToDtos(tweetRepository.findAllByDeletedFalseOrderByPostedDesc());
@@ -40,12 +47,15 @@ public class TweetServiceImpl implements TweetService {
 
 	@Override
 	public TweetResponseDto getTweetById(Long id) {
-		Optional<Tweet> tweet = tweetRepository.findByIdAndDeletedFalse(id);
-		if (tweet.isEmpty()) {
-			throw new BadRequestException("No tweet found with id: " + id);
-		}
 		
-		return tweetMapper.entityToDto(tweet.get());
+		return tweetMapper.entityToDto(getTweetEntity(id));
+	}
+
+	@Override
+	public TweetResponseDto deleteTweet(Long id) {
+		Tweet tweet = getTweetEntity(id);
+		tweet.setDeleted(true);
+		return tweetMapper.entityToDto(tweetRepository.saveAndFlush(tweet));
 	}
 
 

@@ -31,6 +31,11 @@ public class TweetController {
     public TweetResponseDto getTweetById(@PathVariable Long id) {
     	return tweetService.getTweetById(id);
     }
+    
+    @DeleteMapping("{id}")
+    public TweetResponseDto deleteTweet(@PathVariable Long id) {
+    	return tweetService.deleteTweet(id);
+    }
 
 
 }
