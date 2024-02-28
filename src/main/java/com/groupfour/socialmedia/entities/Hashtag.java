@@ -1,8 +1,11 @@
 package com.groupfour.socialmedia.entities;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -25,11 +28,12 @@ public class Hashtag {
 	@CreationTimestamp
 	private Timestamp firstUsed;
 	
-	@CreationTimestamp
+
+	@UpdateTimestamp
 	private Timestamp lastUsed;
 	
 	@ManyToOne
 	@JoinTable(name="tweet_hashtags")
-	private Tweet tweet;
+	private List<Tweet> taggedTweets;
 
 }
