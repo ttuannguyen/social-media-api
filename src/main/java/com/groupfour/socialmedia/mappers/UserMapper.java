@@ -1,5 +1,7 @@
 package com.groupfour.socialmedia.mappers;
 
+import java.util.List;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -16,6 +18,10 @@ public interface UserMapper {
 	User responseDtoToEntity(UserResponseDto userResponseDto);
 	
 	User requestDtoToEntity(UserRequestDto userRequestDto);
+
+	List<UserResponseDto> entitiesToDtos(List<User> entities);
+
+	List<User> dtosToEntities(List<UserResponseDto> userResponseDtos);
 
 
 }

@@ -4,5 +4,7 @@ public interface ValidateService {
 
 	boolean validateUsername(String username);
 
+	boolean validateUsernameExists(String username);
+
 	
 }
