@@ -1,6 +1,8 @@
 package com.groupfour.socialmedia.services.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -91,23 +93,23 @@ public class UserServiceImpl implements UserService {
 	public List<TweetResponseDto> getFeed(String username) {
 		User user = getUserEntity(username);
 		List<TweetResponseDto> feed = new ArrayList<>();
-		for (TweetResponseDto tweet : getUserTweets(username)) {
-			feed.add(tweet);
-		}
+		feed.addAll(getUserTweets(username));
 		for (User followedUser : user.getFollowing()) {
 			Credentials credentials = followedUser.getCredentials();
 			String followedUsername = credentials.getUsername();
-			for (TweetResponseDto tweet : getUserTweets(followedUsername)) {
-				feed.add(tweet);
-			}
+			feed.addAll(getUserTweets(followedUsername));
 		}
+		
+		Collections.sort(feed, Comparator.comparing(TweetResponseDto::getPosted).reversed());
 		return feed;
 	}
 
 	@Override
 	public List<TweetResponseDto> getUserTweets(String username) {
 		User user = getUserEntity(username);
-		return tweetMapper.entitiesToDtos(user.getTweets());
+		List<TweetResponseDto> tweets = tweetMapper.entitiesToDtos(user.getTweets());
+		Collections.sort(tweets, Comparator.comparing(TweetResponseDto::getPosted).reversed());
+		return tweets;
 	}
 
 
