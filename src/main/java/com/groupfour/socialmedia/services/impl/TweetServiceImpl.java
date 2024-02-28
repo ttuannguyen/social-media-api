@@ -6,7 +6,7 @@ import java.util.Optional;
 import com.groupfour.socialmedia.dtos.TweetRequestDto;
 import com.groupfour.socialmedia.dtos.TweetResponseDto;
 import com.groupfour.socialmedia.entities.Tweet;
-
+import com.groupfour.socialmedia.exceptions.BadRequestException;
 import com.groupfour.socialmedia.mappers.TweetMapper;
 import com.groupfour.socialmedia.repositories.TweetRepository;
 import com.groupfour.socialmedia.services.TweetService;
@@ -37,6 +37,16 @@ public class TweetServiceImpl implements TweetService {
 
         return tweetMapper.entityToDto(tweetToCreate);
     }
+
+	@Override
+	public TweetResponseDto getTweetById(Long id) {
+		Optional<Tweet> tweet = tweetRepository.findByIdAndDeletedFalse(id);
+		if (tweet.isEmpty()) {
+			throw new BadRequestException("No tweet found with id: " + id);
+		}
+		
+		return tweetMapper.entityToDto(tweet.get());
+	}
 
 
 }

@@ -26,6 +26,11 @@ public class TweetController {
     public TweetResponseDto createTweet(@RequestBody TweetRequestDto tweetRequestDto) {
         return tweetService.createTweet(tweetRequestDto);
     }
+    
+    @GetMapping("{id}")
+    public TweetResponseDto getTweetById(@PathVariable Long id) {
+    	return tweetService.getTweetById(id);
+    }
 
 
 }
