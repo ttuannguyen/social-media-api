@@ -33,6 +33,14 @@ public class TweetServiceImpl implements TweetService {
     private final UserRepository userRepository;
 
 
+    private Tweet getTweetEntity(Long id) {
+        Optional<Tweet> tweet = tweetRepository.findByIdAndDeletedFalse(id);
+        if (tweet.isEmpty()) {
+            throw new BadRequestException("No tweet found with id: " + id);
+        }
+        return tweet.get();
+    }
+
     @Override
     public List<TweetResponseDto> getAllTweets() {
         return tweetMapper.entitiesToDtos(tweetRepository.findAll());
@@ -51,19 +59,7 @@ public class TweetServiceImpl implements TweetService {
     @Override
     public List<TweetResponseDto> getReposts(Long id) {
 
-        Optional<Tweet> optionalTweet = tweetRepository.findById(id);
-        Tweet ogTweet = null;
-        if (optionalTweet.isEmpty()) {
-            throw new BadRequestException("No tweet found with id: " + id);
-        }
-        else {
-            ogTweet = optionalTweet.get();
-        }
-
-        if (ogTweet.isDeleted()) {
-            throw new BadRequestException("The tweet belonging to id : " + id + " has been deleted");
-        }
-
+        Tweet ogTweet = getTweetEntity(id);
         return tweetMapper.entitiesToDtos(ogTweet.getReposts());
     }
 
@@ -111,7 +107,12 @@ public class TweetServiceImpl implements TweetService {
             mentionedUsers.add(u);
         }
         newRepost.setMentionedUsers(mentionedUsers);
-        return tweetMapper.entityToDto(tweetRepository.saveAndFlush(newRepost));
+
+        tweetRepository.saveAndFlush(newRepost); // Save the repost
+        ogTweet.getReposts().add(newRepost);     // Add repost to original tweet's reposts field
+        tweetRepository.saveAndFlush(ogTweet);   // Save addition to reposts field
+
+        return tweetMapper.entityToDto(newRepost);
     }
 
 
