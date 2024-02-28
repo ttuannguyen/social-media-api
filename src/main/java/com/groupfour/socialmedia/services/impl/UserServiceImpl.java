@@ -47,6 +47,11 @@ public class UserServiceImpl implements UserService {
 		Optional <User> user = userRepository.findByCredentialsUsernameAndDeletedFalse(username);
 		return user.get();
 	}
+	
+	private List<TweetResponseDto> reverseChronological(List<TweetResponseDto> tweets) {
+		Collections.sort(tweets, Comparator.comparing(TweetResponseDto::getPosted).reversed());
+		return tweets;
+	}
 
 	@Override
 	public UserResponseDto getUserByUsername(String username) {
@@ -100,16 +105,15 @@ public class UserServiceImpl implements UserService {
 			feed.addAll(getUserTweets(followedUsername));
 		}
 		
-		Collections.sort(feed, Comparator.comparing(TweetResponseDto::getPosted).reversed());
-		return feed;
+		
+		return reverseChronological(feed);
 	}
 
 	@Override
 	public List<TweetResponseDto> getUserTweets(String username) {
 		User user = getUserEntity(username);
-		List<TweetResponseDto> tweets = tweetMapper.entitiesToDtos(user.getTweets());
-		Collections.sort(tweets, Comparator.comparing(TweetResponseDto::getPosted).reversed());
-		return tweets;
+		
+		return reverseChronological(tweetMapper.entitiesToDtos(user.getTweets()));
 	}
 
 
