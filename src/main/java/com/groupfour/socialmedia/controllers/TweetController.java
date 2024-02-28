@@ -1,6 +1,7 @@
 package com.groupfour.socialmedia.controllers;
 
 
+import com.groupfour.socialmedia.dtos.CredentialsDto;
 import com.groupfour.socialmedia.dtos.TweetRequestDto;
 import com.groupfour.socialmedia.dtos.TweetResponseDto;
 import com.groupfour.socialmedia.dtos.UserResponseDto;
@@ -31,6 +32,11 @@ public class TweetController {
     @PostMapping
     public TweetResponseDto createTweet(@RequestBody TweetRequestDto tweetRequestDto) {
         return tweetService.createTweet(tweetRequestDto);
+    }
+
+    @PostMapping("/{id}/repost")
+    public TweetResponseDto createRepost(@RequestBody CredentialsDto credentialsDto, @PathVariable Long id) {
+        return tweetService.createRepost(credentialsDto, id);
     }
 
 
