@@ -2,6 +2,7 @@ package com.groupfour.socialmedia.services;
 
 import java.util.List;
 
+import com.groupfour.socialmedia.dtos.CredentialsDto;
 import com.groupfour.socialmedia.dtos.TweetResponseDto;
 import com.groupfour.socialmedia.dtos.UserRequestDto;
 import com.groupfour.socialmedia.dtos.UserResponseDto;
@@ -19,5 +20,7 @@ public interface UserService {
 	List<TweetResponseDto> getUserTweets(String username);
 
 	List<UserResponseDto> getAllUsers();
+
+	UserResponseDto deleteUser(String username, CredentialsDto credentials);
 
 }

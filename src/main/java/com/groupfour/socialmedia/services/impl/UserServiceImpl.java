@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.groupfour.socialmedia.exceptions.BadRequestException;
+import com.groupfour.socialmedia.exceptions.NotAuthorizedException;
 import com.groupfour.socialmedia.dtos.CredentialsDto;
 import com.groupfour.socialmedia.dtos.ProfileDto;
 import com.groupfour.socialmedia.dtos.TweetResponseDto;
@@ -119,6 +120,17 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public List<UserResponseDto> getAllUsers() {
 		return userMapper.entitiesToDtos(userRepository.findAllByDeletedFalse());
+	}
+
+	@Override
+	public UserResponseDto deleteUser(String username, CredentialsDto credentials) {
+		User userToDelete = getUserEntity(username);
+		Credentials userCredentials = userToDelete.getCredentials();
+		if (!userCredentials.getPassword().equals(credentials.getPassword()) || !username.equals(credentials.getUsername())) {
+			throw new NotAuthorizedException("You do not have authorization to delete this user.");
+		}
+		userToDelete.setDeleted(true);
+		return userMapper.entityToDto(userRepository.saveAndFlush(userToDelete));
 	}
 
 
