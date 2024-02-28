@@ -64,15 +64,7 @@ public class TweetServiceImpl implements TweetService {
             throw new BadRequestException("The tweet belonging to id : " + id + " has been deleted");
         }
 
-        List<Tweet> allTweets = tweetRepository.findAll();
-        List<Tweet> allReposts = new ArrayList<>();
-        for (Tweet t : allTweets)
-        {
-            if (!t.isDeleted()) {
-                allReposts.add(t);
-            }
-        }
-        return tweetMapper.entitiesToDtos(allReposts);
+        return tweetMapper.entitiesToDtos(ogTweet.getReposts());
     }
 
     @Override
