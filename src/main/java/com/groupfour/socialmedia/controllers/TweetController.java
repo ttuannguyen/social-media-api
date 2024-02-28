@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/tweets")
+@RequestMapping("tweets")
 public class TweetController {
 
     private final TweetService tweetService;
