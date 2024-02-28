@@ -116,5 +116,10 @@ public class UserServiceImpl implements UserService {
 		return reverseChronological(tweetMapper.entitiesToDtos(user.getTweets()));
 	}
 
+	@Override
+	public List<UserResponseDto> getAllUsers() {
+		return userMapper.entitiesToDtos(userRepository.findAllByDeletedFalse());
+	}
+
 
 }
