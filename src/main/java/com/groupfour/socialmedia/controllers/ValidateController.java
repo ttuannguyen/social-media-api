@@ -10,7 +10,8 @@ import com.groupfour.socialmedia.services.ValidateService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("validate")
+@RequiredArgsConstructor
+@RequestMapping("/validate")
 public class ValidateController {
 	
 	private ValidateService validateService;
