@@ -63,10 +63,14 @@ public class TweetServiceImpl implements TweetService {
     }
 
     @Override
-    public TweetResponseDto createTweet(TweetRequestDto tweetRequestDto) {
+    public TweetResponseDto createTweet(CredentialsDto credentialsDto, String content) {
 
-        Tweet tweetToCreate = tweetMapper.requestDtoToEntity(tweetRequestDto);
-        List<User> mentionedUsers = userMapper.dtosToEntities(getMentionedUsers(tweetToCreate.getId()));
+        Tweet tweetToCreate = new Tweet();
+        Credentials creds = credentialsMapper.dtoToEntity(credentialsDto);
+        tweetToCreate.setAuthor(userRepository.findByCredentialsUsernameAndDeletedFalse(creds.getUsername()).get()); // This is sus
+        tweetToCreate.setContent(content);
+
+        List<User> mentionedUsers = userMapper.dtosToEntities(getMentionedUsers(tweetToCreate.getId())); // This must be changed
         List<String> hashtagStrings = getHashtags(tweetToCreate.getId());
         List<Hashtag> hashtagList = new ArrayList<>();
 
@@ -105,6 +109,8 @@ public class TweetServiceImpl implements TweetService {
 
         // Set new tweet's mentionedUsers list
         tweetToCreate.setMentionedUsers(mentionedUsers);
+
+        // SET TIMESTAMP posted
 
         tweetRepository.saveAndFlush(tweetToCreate);
         return tweetMapper.entityToDto(tweetToCreate);
@@ -216,13 +222,6 @@ public class TweetServiceImpl implements TweetService {
         while (matcher.find()) {
             foundHashtags.add(matcher.group());
         }
-
-//        List<String> newHashtags = new ArrayList<>();
-//        for (String h : foundHashtags) {
-//            if(!validateService.validateHashtagExists(h)) {
-//                newHashtags.add(h);
-//            }
-//        }
 
         return foundHashtags;
 

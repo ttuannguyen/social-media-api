@@ -40,8 +40,8 @@ public class TweetController {
     }
 
     @PostMapping
-    public TweetResponseDto createTweet(@RequestBody TweetRequestDto tweetRequestDto) { // THIS NEEDS CHANGING
-        return tweetService.createTweet(tweetRequestDto);
+    public TweetResponseDto createTweet(@RequestBody CredentialsDto credentialsDto, @RequestBody String content) {
+        return tweetService.createTweet(credentialsDto, content);
     }
 
     @PostMapping("/{id}/repost")
