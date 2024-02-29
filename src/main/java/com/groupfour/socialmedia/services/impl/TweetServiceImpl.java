@@ -103,9 +103,7 @@ public class TweetServiceImpl implements TweetService {
         }
 
         // Update + Save all existing hashtags
-        System.out.println("EXISTING HASHTAGS: ");
         for (String h : existingHashtags) {
-            System.out.println(h);
             Hashtag hashtag = hashtagRepository.findByLabel(h).get();
 
             List<Tweet> taggedTweets = hashtag.getTaggedTweets();
