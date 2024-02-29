@@ -1,5 +1,6 @@
 package com.groupfour.socialmedia.services.impl;
 
+import com.groupfour.socialmedia.entities.Credentials;
 import com.groupfour.socialmedia.entities.User;
 import com.groupfour.socialmedia.exceptions.BadRequestException;
 import com.groupfour.socialmedia.services.ValidateService;
@@ -17,6 +18,7 @@ import com.groupfour.socialmedia.services.UserService;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -49,6 +51,40 @@ public class UserServiceImpl implements UserService{
 
 	@Override
 	public void unfollow(CredentialsDto credentialsDto, String username) {
+
+		Credentials receivedCreds = credentialsMapper.dtoToEntity(credentialsDto);
+		String credUsername = receivedCreds.getUsername();
+		String credPassword = receivedCreds.getPassword();
+		if (!validateService.validateCredentialsExist(credUsername, credPassword)) {
+			throw new BadRequestException("Provided credentials does not match any existing user");
+		}
+		if (!validateService.validateUsernameExists(username)) {
+			throw new BadRequestException("Provided username does not match any existing user");
+		}
+
+		User credUser = userRepository.findByCredentialsUsernameAndCredentialsPasswordAndDeletedFalse(credUsername, credPassword).get();
+		User unfollowUser = userRepository.findByCredentialsUsernameAndDeletedFalse(username).get();
+
+		List<User> followers = credUser.getFollowers();
+		Boolean userFound = false;
+		for (User u : followers) {
+			if (u.equals(unfollowUser)) {
+				userFound = true;
+				break;
+			}
+		}
+		if (!userFound) {
+			throw new BadRequestException("There is no following relationship between the two users");
+		}
+
+		followers.remove(unfollowUser);
+		credUser.setFollowers(followers);
+
+		List<User> following = unfollowUser.getFollowing();
+		following.remove(credUser);
+
+		userRepository.saveAndFlush(credUser);
+		userRepository.saveAndFlush(unfollowUser);
 
 	}
 	

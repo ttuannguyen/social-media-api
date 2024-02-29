@@ -16,7 +16,7 @@ public class UserController {
 
 	@PostMapping("/@{username}/unfollow")
 	public void unfollow(@RequestBody CredentialsDto credentialsDto, @PathVariable String username) {
-		//userService.unfollow(credentialsDto, username);
+		userService.unfollow(credentialsDto, username);
 	}
 
 }

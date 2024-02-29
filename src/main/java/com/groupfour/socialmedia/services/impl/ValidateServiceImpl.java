@@ -1,5 +1,6 @@
 package com.groupfour.socialmedia.services.impl;
 
+import com.groupfour.socialmedia.entities.Credentials;
 import com.groupfour.socialmedia.entities.User;
 import com.groupfour.socialmedia.repositories.UserRepository;
 import com.groupfour.socialmedia.services.ValidateService;
@@ -28,6 +29,10 @@ public class ValidateServiceImpl implements ValidateService {
         return user.isPresent();
     }
 
-
+    @Override
+    public boolean validateCredentialsExist(String username, String password) {
+        Optional<User> user = userRepository.findByCredentialsUsernameAndCredentialsPasswordAndDeletedFalse(username, password);
+        return user.isPresent();
+    }
 	
 }
