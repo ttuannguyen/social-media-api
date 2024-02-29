@@ -1,6 +1,8 @@
 package com.groupfour.socialmedia.services.impl;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -26,14 +28,14 @@ public class UserServiceImpl implements UserService{
 	private final CredentialsMapper credentialsMapper;
 	private final ValidateService validateService;
 	
-//	private User getUserEntity(String username) {
-//		if(!validateService.validateUsernameExists(username)) {
-//			throw new BadRequestException("No user exists with username: " + username);
-//			
-//		}
-//		Optional <User> user = userRepository.findByCredentialsUsernameAndDeletedFalse(username);
-//		return user.get();
-//	}
+	private User getUserEntity(String username) {
+		if(!validateService.validateUsernameExists(username)) {
+			throw new BadRequestException("No user exists with username: " + username);
+			
+		}
+		Optional <User> user = userRepository.findByCredentialsUsernameAndDeletedFalse(username);
+		return user.get();
+	}
 //	
 //	@Override
 //	public UserResponseDto getUserByUsername(String username) {
@@ -45,22 +47,12 @@ public class UserServiceImpl implements UserService{
 //	}
 	
 	
-	
 	@Override
-	public UserResponseDto getFollowers(String username) {
-//		Optional<User> optionalUser = userRepository.findByCredentialsUsername(username);
-//		if (optionalUser.isEmpty()) {
-//			return null;
-//		}
-//		User userFound = optionalUser.get();
-//		List<User> followers = userFound.getFollowers();
-//		return userMapper.entityToDto(followers);
-		
-		return null;
+	public List<UserResponseDto> getFollowers(String username) {
+		User userFound = getUserEntity(username);
+		List<User> followers = userFound.getFollowers();
+		return userMapper.entitiesToDtos(followers);
 	}
-	
-
-	
-	
+		
 
 }
