@@ -9,10 +9,10 @@ import lombok.NoArgsConstructor;
 @Data
 public class HashtagResponseDto {
 	
-	private String label;
-	
-	private Timestamp firstUsed;
 
-  private Timestamp lastUsed;
+	private String label;
+	private Timestamp firstUsed;
+	private Timestamp lastUsed;
+
 	
 }

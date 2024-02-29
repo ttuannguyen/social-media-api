@@ -2,16 +2,17 @@ package com.groupfour.socialmedia.services.impl;
 
 import com.groupfour.socialmedia.entities.Credentials;
 import com.groupfour.socialmedia.entities.Hashtag;
+
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
 import com.groupfour.socialmedia.entities.User;
 import com.groupfour.socialmedia.repositories.HashtagRepository;
 import com.groupfour.socialmedia.repositories.UserRepository;
 import com.groupfour.socialmedia.services.ValidateService;
 
-import org.springframework.stereotype.Service;
-
 import lombok.RequiredArgsConstructor;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +20,8 @@ public class ValidateServiceImpl implements ValidateService {
 
     private final UserRepository userRepository;
     private final HashtagRepository hashtagRepository;
+
+
 
     @Override
     public boolean validateUsername(String username) {
@@ -38,10 +41,11 @@ public class ValidateServiceImpl implements ValidateService {
         return user.isPresent();
     }
 
+
     @Override
     public boolean validateHashtagExists(String label) {
         Optional<Hashtag> hashtag = hashtagRepository.findByLabel(label);
         return hashtag.isPresent();
     }
-	
+
 }

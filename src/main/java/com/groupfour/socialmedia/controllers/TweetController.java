@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/tweets")
+@RequestMapping("tweets")
 public class TweetController {
 
     private final TweetService tweetService;
@@ -42,6 +42,16 @@ public class TweetController {
     @PostMapping
     public TweetResponseDto createTweet(@RequestBody TweetRequestDto tweetRequestDto) {
         return tweetService.createTweet(tweetRequestDto);
+    }
+    
+    @GetMapping("{id}")
+    public TweetResponseDto getTweetById(@PathVariable Long id) {
+    	return tweetService.getTweetById(id);
+    }
+    
+    @DeleteMapping("{id}")
+    public TweetResponseDto deleteTweet(@PathVariable Long id) {
+    	return tweetService.deleteTweet(id);
     }
 
     @PostMapping("/{id}/repost")
