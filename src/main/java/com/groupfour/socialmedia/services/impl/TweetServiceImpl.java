@@ -45,9 +45,9 @@ public class TweetServiceImpl implements TweetService {
         return tweet.get();
     }
 
-    @Override
+    @Override // Need to filter out deleted tweets!
     public List<TweetResponseDto> getAllTweets() {
-        List<TweetResponseDto> allTweets = tweetMapper.entitiesToDtos(tweetRepository.findAll());
+        List<TweetResponseDto> allTweets = tweetMapper.entitiesToDtos(tweetRepository.findAllByDeletedFalse());
         Collections.sort(allTweets, Comparator.comparing(TweetResponseDto::getPosted).reversed());
         return allTweets;
     }
@@ -101,6 +101,10 @@ public class TweetServiceImpl implements TweetService {
         tweetRepository.saveAndFlush(ogTweet);   // Save addition to reposts field
 
         return tweetMapper.entityToDto(newRepost);
+    }
+
+    public List<TweetResponseDto> getReplies(Long id) {
+        return null; // WIP
     }
 
 
