@@ -1,15 +1,15 @@
 package com.groupfour.socialmedia.services.impl;
 
+import com.groupfour.socialmedia.dtos.*;
 import com.groupfour.socialmedia.entities.Credentials;
+import com.groupfour.socialmedia.entities.Tweet;
 import com.groupfour.socialmedia.entities.User;
 import com.groupfour.socialmedia.exceptions.BadRequestException;
+import com.groupfour.socialmedia.mappers.TweetMapper;
+import com.groupfour.socialmedia.repositories.TweetRepository;
 import com.groupfour.socialmedia.services.ValidateService;
 import org.springframework.stereotype.Service;
 
-import com.groupfour.socialmedia.dtos.CredentialsDto;
-import com.groupfour.socialmedia.dtos.ProfileDto;
-import com.groupfour.socialmedia.dtos.UserRequestDto;
-import com.groupfour.socialmedia.dtos.UserResponseDto;
 import com.groupfour.socialmedia.mappers.CredentialsMapper;
 import com.groupfour.socialmedia.mappers.ProfileMapper;
 import com.groupfour.socialmedia.mappers.UserMapper;
@@ -18,6 +18,7 @@ import com.groupfour.socialmedia.services.UserService;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +31,8 @@ public class UserServiceImpl implements UserService{
 	private final ProfileMapper profileMapper;
 	private final CredentialsMapper credentialsMapper;
 	private final ValidateService validateService;
+	private final TweetRepository tweetRepository;
+	private final TweetMapper tweetMapper;
 
 	private User getUserEntity(String username) {
 		if(!validateService.validateUsernameExists(username)) {
@@ -86,6 +89,19 @@ public class UserServiceImpl implements UserService{
 		userRepository.saveAndFlush(credUser);
 		userRepository.saveAndFlush(unfollowUser);
 
+	}
+
+	public List<TweetResponseDto> getMentions(String username) {
+		List<Tweet> mentionTweets = new ArrayList<>();
+		for (Tweet t : tweetRepository.findAllByDeletedFalse()) {
+			if (t.getContent() == null) {
+				continue;
+			}
+			if (t.getContent().contains("@" + username)) {
+				mentionTweets.add(t);
+			}
+		}
+		return tweetMapper.entitiesToDtos(mentionTweets);
 	}
 	
 	

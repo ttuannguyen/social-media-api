@@ -197,7 +197,7 @@ public class Seeder implements CommandLineRunner {
         tweet5.setAuthor(user3);
         tweet5.setDeleted(false);
         // Set Content @PARAM String
-        tweet5.setContent("This is some content 5 tweet5");
+        tweet5.setContent("This is some content 5 tweet5 @Tarnished");
         tweet5.setMentionedUsers(Arrays.asList(user1, user2));
         tweet5.setInReplyTo(tweet4);
         tweetRepository.saveAndFlush(tweet5);
@@ -217,7 +217,7 @@ public class Seeder implements CommandLineRunner {
         deletedTweet.setAuthor(user3);
         deletedTweet.setDeleted(true);
         // Set Content @PARAM String
-        deletedTweet.setContent("This is a deleted tweet (User3) tweet7");
+        deletedTweet.setContent("This is a deleted tweet (User3) tweet7 @Tarnished");
         deletedTweet.setMentionedUsers(Arrays.asList(user1, user2));
         tweetRepository.saveAndFlush(deletedTweet);
 
@@ -262,7 +262,7 @@ public class Seeder implements CommandLineRunner {
         mention1.setAuthor(user2);
         mention1.setDeleted(false);
         // Set Content @PARAM String
-        mention1.setContent("This is some content for tweet mention 1");
+        mention1.setContent("This is some content for tweet mention 1 @Tarnished");
         tweetRepository.saveAndFlush(mention1);
 
         // Following
