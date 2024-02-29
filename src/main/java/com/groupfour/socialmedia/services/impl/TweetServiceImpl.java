@@ -129,7 +129,7 @@ public class TweetServiceImpl implements TweetService {
     }
 
 	@Override
-	public List<HashtagResponseDto> getTags(Long id) {
+	public List<HashtagResponseDto> getTagsOfTweet(Long id) {
 		
 		Optional<Tweet> optionalTweet = tweetRepository.findById(id);
 		//  If that tweet is deleted or otherwise doesn't exist, an error should be sent in lieu of a response.

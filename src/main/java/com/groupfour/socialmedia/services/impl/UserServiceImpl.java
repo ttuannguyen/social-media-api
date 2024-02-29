@@ -1,5 +1,6 @@
 package com.groupfour.socialmedia.services.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -48,9 +49,15 @@ public class UserServiceImpl implements UserService{
 	
 	
 	@Override
-	public List<UserResponseDto> getFollowers(String username) {
+	public List<UserResponseDto> getUserFollowers(String username) {
 		User userFound = getUserEntity(username);
-		List<User> followers = userFound.getFollowers();
+		List<User> followers = new ArrayList<>();
+		for (User follower : userFound.getFollowers()) {
+			if (!follower.isDeleted()) {
+				followers.add(follower);
+			}
+		}
+		
 		return userMapper.entitiesToDtos(followers);
 	}
 		

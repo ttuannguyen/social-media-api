@@ -9,7 +9,7 @@ public interface UserService {
 
 //	UserResponseDto getUserByUsername(String username);
 	
-	List<UserResponseDto> getFollowers(String username);
+	List<UserResponseDto> getUserFollowers(String username);
 
 
 }
