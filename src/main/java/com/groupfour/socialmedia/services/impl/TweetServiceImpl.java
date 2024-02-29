@@ -1,9 +1,6 @@
 package com.groupfour.socialmedia.services.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import com.groupfour.socialmedia.dtos.CredentialsDto;
 import com.groupfour.socialmedia.dtos.TweetRequestDto;
@@ -50,7 +47,9 @@ public class TweetServiceImpl implements TweetService {
 
     @Override
     public List<TweetResponseDto> getAllTweets() {
-        return tweetMapper.entitiesToDtos(tweetRepository.findAll());
+        List<TweetResponseDto> allTweets = tweetMapper.entitiesToDtos(tweetRepository.findAll());
+        Collections.sort(allTweets, Comparator.comparing(TweetResponseDto::getPosted).reversed());
+        return allTweets;
     }
 
     @Override
