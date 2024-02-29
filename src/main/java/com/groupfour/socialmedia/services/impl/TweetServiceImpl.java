@@ -1,6 +1,8 @@
 package com.groupfour.socialmedia.services.impl;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.groupfour.socialmedia.dtos.CredentialsDto;
 import com.groupfour.socialmedia.dtos.TweetRequestDto;
@@ -23,6 +25,7 @@ import com.groupfour.socialmedia.services.ValidateService;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Service
 @RequiredArgsConstructor
@@ -119,6 +122,35 @@ public class TweetServiceImpl implements TweetService {
         }
 
         return tweetMapper.entitiesToDtos(replies);
+
+    }
+
+    public List<UserResponseDto> getMentionedUsers(@PathVariable Long id) {
+
+        Optional<Tweet> optionalTweet = tweetRepository.findByIdAndDeletedFalse(id);
+        if (optionalTweet.isEmpty()) {
+            throw new BadRequestException("No tweet found with id: " + id);
+        }
+
+        Tweet tweet = optionalTweet.get();
+        String content = tweet.getContent();
+
+        List<String> foundUsernames = new ArrayList<>();
+        String regex = "@[a-zA-Z0-9_]+";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(content);
+        while (matcher.find()) {
+            foundUsernames.add(matcher.group().substring(1)); // The substring() call removes the @
+        }
+
+        List<User> foundActiveUsers = new ArrayList<>();
+        for (String u : foundUsernames) {
+            if(validateService.validateUsernameExists(u)) {
+                foundActiveUsers.add(userRepository.findByCredentialsUsername(u).get());
+            }
+        }
+
+        return userMapper.entitiesToDtos(foundActiveUsers);
 
     }
 

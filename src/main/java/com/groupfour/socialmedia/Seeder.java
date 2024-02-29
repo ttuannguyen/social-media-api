@@ -197,7 +197,7 @@ public class Seeder implements CommandLineRunner {
         tweet5.setAuthor(user3);
         tweet5.setDeleted(false);
         // Set Content @PARAM String
-        tweet5.setContent("This is some content 5 tweet5 @Tarnished");
+        tweet5.setContent("This is some @mario @Luigi content @Nathan 5 tweet5 @Tarnished");
         tweet5.setMentionedUsers(Arrays.asList(user1, user2));
         tweet5.setInReplyTo(tweet4);
         tweetRepository.saveAndFlush(tweet5);
