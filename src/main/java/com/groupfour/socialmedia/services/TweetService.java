@@ -11,7 +11,7 @@ import java.util.List;
 public interface TweetService {
 
     List<TweetResponseDto> getAllTweets();
-    TweetResponseDto createTweet(CredentialsDto credentialsDto, String content);
+    TweetResponseDto createTweet(TweetRequestDto tweetRequestDto);
 
     List<TweetResponseDto> getReposts(Long id);
 

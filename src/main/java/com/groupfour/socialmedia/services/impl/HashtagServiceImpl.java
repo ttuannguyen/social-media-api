@@ -33,8 +33,6 @@ public class HashtagServiceImpl implements HashtagService {
 		hashtag.setLabel(label);
 		List<Tweet> taggedTweets = new ArrayList<>();
 		taggedTweets.add(tweet);
-		// SET firstUsed
-		// SET lastUsed
 
 		return hashtagMapper.hashtagEntityToDto(hashtagRepository.saveAndFlush(hashtag));
 	}
