@@ -60,7 +60,13 @@ public class Tweet {
 	
 	private boolean deleted = false;
 	
-	@OneToMany(mappedBy="taggedTweets")
+//	@ManyToMany(mappedBy="taggedTweets")
+//	private List<Hashtag> hashtags;
+	
+    @ManyToMany
+	@JoinTable(name="tweet_hashtags",
+	joinColumns = @JoinColumn(name="tweet_id"),
+	inverseJoinColumns = @JoinColumn(name="hashtag_id"))
 	private List<Hashtag> hashtags;
 
 }

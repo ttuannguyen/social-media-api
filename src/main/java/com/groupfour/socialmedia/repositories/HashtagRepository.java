@@ -8,4 +8,7 @@ import com.groupfour.socialmedia.entities.Hashtag;
 @Repository
 public interface HashtagRepository extends JpaRepository<Hashtag, Long>{
 
+	// Method to check if a hashtag with a specific label exists in the DB
+	Hashtag findByLabel(String label);
+
 }
