@@ -27,5 +27,7 @@ public class ValidateServiceImpl implements ValidateService {
         Optional<User> user = userRepository.findByCredentialsUsernameAndDeletedFalse(username);
         return user.isPresent();
     }
+
+
 	
 }

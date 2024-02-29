@@ -46,6 +46,11 @@ public class UserServiceImpl implements UserService{
 		}
 		return userMapper.entityToDto(user.get());
 	}
+
+	@Override
+	public void unfollow(CredentialsDto credentialsDto, String username) {
+
+	}
 	
 	
 
