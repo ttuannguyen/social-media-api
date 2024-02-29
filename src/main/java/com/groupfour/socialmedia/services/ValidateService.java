@@ -14,4 +14,6 @@ public interface ValidateService {
 
     boolean validateCredentialsExist(String username, String password);
 
+    boolean validateHashtagExists(String label);
+
 }

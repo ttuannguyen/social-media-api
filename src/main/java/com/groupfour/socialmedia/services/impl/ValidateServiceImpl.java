@@ -1,7 +1,9 @@
 package com.groupfour.socialmedia.services.impl;
 
 import com.groupfour.socialmedia.entities.Credentials;
+import com.groupfour.socialmedia.entities.Hashtag;
 import com.groupfour.socialmedia.entities.User;
+import com.groupfour.socialmedia.repositories.HashtagRepository;
 import com.groupfour.socialmedia.repositories.UserRepository;
 import com.groupfour.socialmedia.services.ValidateService;
 
@@ -16,6 +18,7 @@ import java.util.Optional;
 public class ValidateServiceImpl implements ValidateService {
 
     private final UserRepository userRepository;
+    private final HashtagRepository hashtagRepository;
 
     @Override
     public boolean validateUsername(String username) {
@@ -33,6 +36,12 @@ public class ValidateServiceImpl implements ValidateService {
     public boolean validateCredentialsExist(String username, String password) {
         Optional<User> user = userRepository.findByCredentialsUsernameAndCredentialsPasswordAndDeletedFalse(username, password);
         return user.isPresent();
+    }
+
+    @Override
+    public boolean validateHashtagExists(String label) {
+        Optional<Hashtag> hashtag = hashtagRepository.findByLabel(label);
+        return hashtag.isPresent();
     }
 	
 }

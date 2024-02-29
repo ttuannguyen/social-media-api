@@ -9,15 +9,19 @@ import com.groupfour.socialmedia.dtos.TweetRequestDto;
 import com.groupfour.socialmedia.dtos.TweetResponseDto;
 import com.groupfour.socialmedia.dtos.UserResponseDto;
 import com.groupfour.socialmedia.entities.Credentials;
+import com.groupfour.socialmedia.entities.Hashtag;
 import com.groupfour.socialmedia.entities.Tweet;
 
 import com.groupfour.socialmedia.entities.User;
 import com.groupfour.socialmedia.exceptions.BadRequestException;
 import com.groupfour.socialmedia.mappers.CredentialsMapper;
+import com.groupfour.socialmedia.mappers.HashtagMapper;
 import com.groupfour.socialmedia.mappers.TweetMapper;
 import com.groupfour.socialmedia.mappers.UserMapper;
+import com.groupfour.socialmedia.repositories.HashtagRepository;
 import com.groupfour.socialmedia.repositories.TweetRepository;
 import com.groupfour.socialmedia.repositories.UserRepository;
+import com.groupfour.socialmedia.services.HashtagService;
 import com.groupfour.socialmedia.services.TweetService;
 
 import com.groupfour.socialmedia.services.UserService;
@@ -38,6 +42,9 @@ public class TweetServiceImpl implements TweetService {
     private final UserRepository userRepository;
     private final ValidateService validateService;
     private final UserService userService;
+    private final HashtagMapper hashtagMapper;
+    private final HashtagService hashtagService;
+    private final HashtagRepository hashtagRepository;
 
 
     private Tweet getTweetEntity(Long id) {
@@ -59,9 +66,47 @@ public class TweetServiceImpl implements TweetService {
     public TweetResponseDto createTweet(TweetRequestDto tweetRequestDto) {
 
         Tweet tweetToCreate = tweetMapper.requestDtoToEntity(tweetRequestDto);
+        List<User> mentionedUsers = userMapper.dtosToEntities(getMentionedUsers(tweetToCreate.getId()));
+        List<String> hashtagStrings = getHashtags(tweetToCreate.getId());
+        List<Hashtag> hashtagList = new ArrayList<>();
+
+        // Determine which hashtags are new and which are not
+        List<String> newHashtags = new ArrayList<>();
+        List<String> existingHashtags = new ArrayList<>();
+        for (String h : hashtagStrings) {
+            if(!validateService.validateHashtagExists(h)) {
+                newHashtags.add(h);
+            }
+            else {
+                existingHashtags.add(h);
+            }
+        }
+
+        // Create + Save all nonexistent hashtags
+        for (String h : newHashtags) {
+            hashtagService.createHashtag(h, tweetToCreate); // This includes a saveAndFlush()
+        }
+
+        // Update + Save all existing hashtags
+        for (String h : existingHashtags) {
+            Hashtag hashtag = hashtagRepository.findByLabel(h).get();
+            List<Tweet> taggedTweets = hashtag.getTaggedTweets();
+            taggedTweets.add(tweetToCreate);
+            // UPDATE lastUsed
+            hashtagRepository.saveAndFlush(hashtag);
+        }
+
+        // Set new tweet's hashtag list
+        for (String s : hashtagStrings) {
+            Hashtag hashtag = hashtagRepository.findByLabel(s).get();
+            hashtagList.add(hashtag);
+        }
+        tweetToCreate.setHashtags(hashtagList);
+
+        // Set new tweet's mentionedUsers list
+        tweetToCreate.setMentionedUsers(mentionedUsers);
+
         tweetRepository.saveAndFlush(tweetToCreate);
-
-
         return tweetMapper.entityToDto(tweetToCreate);
     }
 
@@ -125,7 +170,7 @@ public class TweetServiceImpl implements TweetService {
 
     }
 
-    public List<UserResponseDto> getMentionedUsers(@PathVariable Long id) {
+    public List<UserResponseDto> getMentionedUsers(Long id) {
 
         Optional<Tweet> optionalTweet = tweetRepository.findByIdAndDeletedFalse(id);
         if (optionalTweet.isEmpty()) {
@@ -151,6 +196,35 @@ public class TweetServiceImpl implements TweetService {
         }
 
         return userMapper.entitiesToDtos(foundActiveUsers);
+
+    }
+
+    public List<String> getHashtags(Long id) {
+
+        Optional<Tweet> optionalTweet = tweetRepository.findByIdAndDeletedFalse(id);
+        if (optionalTweet.isEmpty()) {
+            throw new BadRequestException("No tweet found with id: " + id);
+        }
+
+        Tweet tweet = optionalTweet.get();
+        String content = tweet.getContent();
+
+        List<String> foundHashtags = new ArrayList<>();
+        String regex = "#[a-zA-Z0-9_]+";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(content);
+        while (matcher.find()) {
+            foundHashtags.add(matcher.group());
+        }
+
+//        List<String> newHashtags = new ArrayList<>();
+//        for (String h : foundHashtags) {
+//            if(!validateService.validateHashtagExists(h)) {
+//                newHashtags.add(h);
+//            }
+//        }
+
+        return foundHashtags;
 
     }
 
