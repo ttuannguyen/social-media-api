@@ -1,6 +1,7 @@
 package com.groupfour.socialmedia.services.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -131,6 +132,26 @@ public class UserServiceImpl implements UserService {
 		}
 		userToDelete.setDeleted(true);
 		return userMapper.entityToDto(userRepository.saveAndFlush(userToDelete));
+	}
+
+	@Override
+	public void addFollow(String username, CredentialsDto credentialsDto) {
+		User user = getUserEntity(credentialsDto.getUsername());
+		Credentials userCredentials = user.getCredentials();
+		if (!userCredentials.getPassword().equals(credentialsDto.getPassword())) {
+			throw new NotAuthorizedException("Invalid password");
+		}
+		User userToFollow = getUserEntity(username);
+		List<User> userToFollowFollowers = userToFollow.getFollowers();
+		if (userToFollowFollowers.contains(user)) {
+			throw new BadRequestException("You are already following that user.");
+		}
+		userToFollowFollowers.add(user);
+		userToFollow.setFollowers(userToFollowFollowers);
+		List<User> followedByUser = user.getFollowing();
+		followedByUser.add(userToFollow);
+		user.setFollowing(followedByUser);
+		userRepository.saveAllAndFlush(Arrays.asList(user, userToFollow));
 	}
 
 

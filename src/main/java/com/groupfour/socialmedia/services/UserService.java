@@ -23,4 +23,6 @@ public interface UserService {
 
 	UserResponseDto deleteUser(String username, CredentialsDto credentials);
 
+	void addFollow(String username, CredentialsDto credentialsDto);
+
 }
