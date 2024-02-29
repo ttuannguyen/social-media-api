@@ -19,6 +19,8 @@ public interface TweetService {
     TweetResponseDto createRepost(CredentialsDto credentialsDto, Long id);
     
     List<HashtagResponseDto> getTagsOfTweet(Long id);
+    
+	void createLike(CredentialsDto credentialsDto, Long id);
 
 
 }

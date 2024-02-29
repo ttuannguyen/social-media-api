@@ -134,13 +134,39 @@ public class TweetServiceImpl implements TweetService {
 		Optional<Tweet> optionalTweet = tweetRepository.findById(id);
 		//  If that tweet is deleted or otherwise doesn't exist, an error should be sent in lieu of a response.
 		if (optionalTweet.isEmpty()) {
-			throw new NotFoundException("No tweet exists with this id" + id);
+			throw new NotFoundException("No tweet exists with this id:" + id);
 		}
 		Tweet tweetFound =  optionalTweet.get();
 		
 		// IMPORTANT Remember that tags and mentions must be parsed by the server!
 		return hashtagMapper.hashtagEntitiesToDtos(tweetFound.getHashtags());
 	}
+
+	@Override
+	public void createLike(CredentialsDto credentialsDto, Long id) {
+		
+		Optional<Tweet> optionalTweet = tweetRepository.findByIdAndDeletedFalse(id);
+		if(optionalTweet.isEmpty()) {
+			throw new BadRequestException("No tweet exists with this id:" + id);
+		}
+		Tweet tweet = optionalTweet.get();
+		
+		Credentials credentials = credentialsMapper.dtoToEntity(credentialsDto);
+		
+		Optional<User> optionalUser = userRepository.findByCredentials(credentials);
+		if(optionalTweet.isEmpty()) {
+			throw new NotFoundException("No user exists with these credentials");
+		}
+		User user = optionalUser.get();
+		
+		
+		tweet.getLikedByUsers().add(user);
+		tweetRepository.saveAndFlush(tweet);		
+		
+		
+	}
+
+
 
 
 
