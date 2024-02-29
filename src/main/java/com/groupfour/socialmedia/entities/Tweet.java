@@ -60,11 +60,13 @@ public class Tweet {
 	private List<User> mentionedUsers = new ArrayList<>();
 	
 	private boolean deleted = false;
-	
-	@ManyToMany
-	@JoinTable(name="tweet_hashtags",
-	joinColumns = @JoinColumn(name="tweet_id"),
-	inverseJoinColumns = @JoinColumn(name="hashtag_id"))
-	private List<Hashtag> hashtags;
+
+
+    @ManyToMany
+    @JoinTable(name="tweet_hashtags",
+            joinColumns = @JoinColumn(name="tweet_id"),
+            inverseJoinColumns = @JoinColumn(name="hashtag_id"))
+    private List<Hashtag> hashtags;
+
 
 }

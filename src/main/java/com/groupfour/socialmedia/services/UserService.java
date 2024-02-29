@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.groupfour.socialmedia.dtos.CredentialsDto;
 import com.groupfour.socialmedia.dtos.TweetResponseDto;
+
 import com.groupfour.socialmedia.dtos.UserRequestDto;
 import com.groupfour.socialmedia.dtos.UserResponseDto;
 
@@ -24,5 +25,9 @@ public interface UserService {
 	UserResponseDto deleteUser(String username, CredentialsDto credentials);
 
 	void addFollow(String username, CredentialsDto credentialsDto);
+
+	void unfollow(CredentialsDto credentialsDto, String username);
+
+	List<TweetResponseDto> getMentions(String username);
 
 }

@@ -6,5 +6,6 @@ public interface ValidateService {
 
 	boolean validateUsernameExists(String username);
 
-	
+	boolean validateCredentialsExist(String username, String password);
+
 }

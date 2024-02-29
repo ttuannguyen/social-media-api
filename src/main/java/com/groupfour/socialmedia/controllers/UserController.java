@@ -1,5 +1,6 @@
 package com.groupfour.socialmedia.controllers;
 
+
 import java.util.List;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -10,10 +11,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.groupfour.socialmedia.dtos.UserRequestDto;
-import com.groupfour.socialmedia.dtos.UserResponseDto;
 import com.groupfour.socialmedia.dtos.CredentialsDto;
 import com.groupfour.socialmedia.dtos.TweetResponseDto;
+import com.groupfour.socialmedia.dtos.UserRequestDto;
+import com.groupfour.socialmedia.dtos.UserResponseDto;
 import com.groupfour.socialmedia.services.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -66,5 +67,15 @@ public class UserController {
 		userService.addFollow(username, credentialsDto);
 	}
 	
+
+	@PostMapping("/@{username}/unfollow")
+	public void unfollow(@RequestBody CredentialsDto credentialsDto, @PathVariable String username) {
+		userService.unfollow(credentialsDto, username);
+	}
+
+	@GetMapping("/@{username}/mentions")
+	public List<TweetResponseDto> getMentions(@PathVariable String username) {
+		return userService.getMentions(username);
+	}
 
 }

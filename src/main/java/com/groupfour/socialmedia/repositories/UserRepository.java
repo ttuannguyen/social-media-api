@@ -9,13 +9,14 @@ import org.springframework.stereotype.Repository;
 import com.groupfour.socialmedia.entities.User;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long>{
-	
-	public Optional<User> findByCredentialsUsernameAndDeletedFalse(String username);
+public interface UserRepository extends JpaRepository<User, Long> {
 
-	public Optional<User> findByCredentialsUsername(String username);
+	Optional<User> findByCredentialsUsernameAndDeletedFalse(String username);
 
-	public List<User> findAllByDeletedFalse();
-	
-	
+	Optional<User> findByCredentialsUsername(String username);
+
+	List<User> findAllByDeletedFalse();
+
+	Optional<User> findByCredentialsUsernameAndCredentialsPasswordAndDeletedFalse(String username, String password);
+
 }
