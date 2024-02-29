@@ -14,7 +14,18 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/validate")
 public class ValidateController {
 	
-	private ValidateService validateService;
+	private final ValidateService validateService;
+	
+	
+	@GetMapping("username/available/@{username}")
+	public boolean valdateUsername(@PathVariable String username) {
+		return validateService.validateUsername(username);
+	}
+	
+	@GetMapping("username/exists/@{username}")
+	public boolean validateUserNameExists(@PathVariable String username) {
+		return validateService.validateUsernameExists(username);
+	}
 	
 	@GetMapping("/tag/exists/{label}") 
 	public boolean validateTagExists(@PathVariable String label) {
