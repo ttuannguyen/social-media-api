@@ -71,15 +71,13 @@ public class UserServiceImpl implements UserService {
 		Credentials receivedCreds = credentialsMapper.dtoToEntity(credentialsDto);
 		String credUsername = receivedCreds.getUsername();
 		String credPassword = receivedCreds.getPassword();
+		User unfollowUser = getUserEntity(username);
 		if (!validateService.validateCredentialsExist(credUsername, credPassword)) {
 			throw new BadRequestException("Provided credentials does not match any existing user");
 		}
-		if (!validateService.validateUsernameExists(username)) {
-			throw new BadRequestException("Provided username does not match any existing user");
-		}
+		
 
 		User credUser = userRepository.findByCredentialsUsernameAndCredentialsPasswordAndDeletedFalse(credUsername, credPassword).get();
-		User unfollowUser = userRepository.findByCredentialsUsernameAndDeletedFalse(username).get();
 
 		List<User> following = credUser.getFollowing();
 		Boolean userFound = false;
