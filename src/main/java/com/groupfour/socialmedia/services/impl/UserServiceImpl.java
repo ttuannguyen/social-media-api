@@ -72,19 +72,17 @@ public class UserServiceImpl implements UserService {
 		Credentials receivedCreds = credentialsMapper.dtoToEntity(credentialsDto);
 		String credUsername = receivedCreds.getUsername();
 		String credPassword = receivedCreds.getPassword();
+		User unfollowUser = getUserEntity(username);
 		if (!validateService.validateCredentialsExist(credUsername, credPassword)) {
 			throw new BadRequestException("Provided credentials does not match any existing user");
 		}
-		if (!validateService.validateUsernameExists(username)) {
-			throw new BadRequestException("Provided username does not match any existing user");
-		}
+		
 
 		User credUser = userRepository.findByCredentialsUsernameAndCredentialsPasswordAndDeletedFalse(credUsername, credPassword).get();
-		User unfollowUser = userRepository.findByCredentialsUsernameAndDeletedFalse(username).get();
 
-		List<User> followers = credUser.getFollowers();
+		List<User> following = credUser.getFollowing();
 		Boolean userFound = false;
-		for (User u : followers) {
+		for (User u : following) {
 			if (u.equals(unfollowUser)) {
 				userFound = true;
 				break;
@@ -94,11 +92,11 @@ public class UserServiceImpl implements UserService {
 			throw new BadRequestException("There is no following relationship between the two users");
 		}
 
-		followers.remove(unfollowUser);
-		credUser.setFollowers(followers);
+		following.remove(unfollowUser);
+		credUser.setFollowing(following);
 
-		List<User> following = unfollowUser.getFollowing();
-		following.remove(credUser);
+		List<User> followers = unfollowUser.getFollowers();
+		followers.remove(credUser);
 
 		userRepository.saveAndFlush(credUser);
 		userRepository.saveAndFlush(unfollowUser);
@@ -222,6 +220,20 @@ public class UserServiceImpl implements UserService {
 		Credentials userCredentials = userToDelete.getCredentials();
 		if (!userCredentials.getPassword().equals(credentials.getPassword()) || !username.equals(credentials.getUsername())) {
 			throw new NotAuthorizedException("You do not have authorization to delete this user.");
+		}
+		List<User> userFollowers = userToDelete.getFollowers();
+		List<User> userFollowing = userToDelete.getFollowing();
+		for (User follower : userFollowers) {
+			List<User> following = follower.getFollowing();
+			following.remove(userToDelete);
+			follower.setFollowing(following);
+			userRepository.saveAndFlush(follower);
+		}
+		for (User followed : userFollowing) {
+			List<User> followers = followed.getFollowers();
+			followers.remove(userToDelete);
+			followed.setFollowers(followers);
+			userRepository.saveAndFlush(followed);
 		}
 		userToDelete.setDeleted(true);
 		return userMapper.entityToDto(userRepository.saveAndFlush(userToDelete));
