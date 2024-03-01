@@ -16,6 +16,9 @@ public interface UserRepository extends JpaRepository<User, Long>{
 
 	Optional<User> findByCredentialsUsernameAndDeletedFalse(String username);
 	
+	// created to assist the createLike() method in TweetServiceImpl
 	Optional<User> findByCredentials(Credentials credentials);
+
+	Optional<User> findByCredentialsUsernameAndCredentialsPasswordAndDeletedFalse(String username, String password);
 	
 }

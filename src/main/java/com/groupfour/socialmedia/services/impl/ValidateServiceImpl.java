@@ -31,9 +31,16 @@ public class ValidateServiceImpl implements ValidateService {
 		Optional<User> user = userRepository.findByCredentialsUsernameAndDeletedFalse(username);
 		return user.isPresent();
 	}
+	
+	
+    @Override
+    public boolean validateCredentialsExist(String username, String password) {
+        Optional<User> user = userRepository.findByCredentialsUsernameAndCredentialsPasswordAndDeletedFalse(username, password);
+        return user.isPresent();
+    }
 
 	@Override	
-    public boolean validateTagExists(String label) {
+    public boolean validateHashtagExists(String label) {
         // Check if a hashtag with the given label exists in the database
         Optional<Hashtag> optionalHashtag = hashtagRepository.findByLabel(label);
         if (optionalHashtag.isEmpty()) {

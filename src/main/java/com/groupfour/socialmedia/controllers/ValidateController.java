@@ -28,8 +28,8 @@ public class ValidateController {
 	}
 	
 	@GetMapping("/tag/exists/{label}") 
-	public boolean validateTagExists(@PathVariable String label) {
-		return validateService.validateTagExists(label);
+	public boolean validateHashtagExists(@PathVariable String label) {
+		return validateService.validateHashtagExists(label);
 	}
 	
 

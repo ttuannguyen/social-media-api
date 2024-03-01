@@ -45,6 +45,8 @@ public class TweetController {
         return tweetService.createRepost(credentialsDto, id);
     }
     
+    
+    // MY CREATED ENDPOINTS
     @GetMapping("/{id}/tags")
     public List<HashtagResponseDto> getTagsOfTweet(@PathVariable Long id) {
     	return tweetService.getTagsOfTweet(id);
@@ -54,6 +56,13 @@ public class TweetController {
     public void createLike(@RequestBody CredentialsDto credentialsDto, @PathVariable Long id) {
     	tweetService.createLike(credentialsDto, id);
     }
+    
+    @PostMapping("/{id}/reply")
+    public TweetResponseDto createReply(@RequestBody CredentialsDto credentialsDto, @PathVariable Long id) {
+    	return tweetService.createReply(credentialsDto, id);
+    }
+    
+    
     
 
 
