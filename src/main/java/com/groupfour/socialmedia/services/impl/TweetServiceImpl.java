@@ -262,7 +262,7 @@ public class TweetServiceImpl implements TweetService {
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(content);
         while (matcher.find()) {
-            foundHashtags.add(matcher.group());
+            foundHashtags.add(matcher.group().substring(1));
         }
 
         return foundHashtags;
@@ -276,10 +276,11 @@ public class TweetServiceImpl implements TweetService {
 		// If that tweet is deleted or otherwise doesn't exist, an error should be sent
 		// in lieu of a response.
 		if (optionalTweet.isEmpty()) {
+			System.out.println("-----------------------------GETTAGSOFTWEET - empty");
 			throw new NotFoundException("No tweet exists with this id:" + id);
 		}
+		System.out.println("-----------------------------GETTAGSOFTWEET - not empty");
 		Tweet tweetFound = optionalTweet.get();
-
 		// IMPORTANT Remember that tags and mentions must be parsed by the server!
 		return hashtagMapper.hashtagEntitiesToDtos(tweetFound.getHashtags());
 	}
