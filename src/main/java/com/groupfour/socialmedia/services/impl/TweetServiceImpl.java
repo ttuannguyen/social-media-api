@@ -3,6 +3,8 @@ package com.groupfour.socialmedia.services.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Service;
 
@@ -11,6 +13,7 @@ import com.groupfour.socialmedia.dtos.HashtagResponseDto;
 import com.groupfour.socialmedia.dtos.TweetRequestDto;
 import com.groupfour.socialmedia.dtos.TweetResponseDto;
 import com.groupfour.socialmedia.entities.Credentials;
+import com.groupfour.socialmedia.entities.Hashtag;
 import com.groupfour.socialmedia.entities.Tweet;
 import com.groupfour.socialmedia.entities.User;
 import com.groupfour.socialmedia.exceptions.BadRequestException;
@@ -174,7 +177,7 @@ public class TweetServiceImpl implements TweetService {
 	@Override
 	public TweetResponseDto createReply(CredentialsDto credentialsDto, Long id) {
 
-		Tweet tweetFound = getTweetEntity(id);
+		Tweet originalTweet = getTweetEntity(id);
 		
 		
 		Credentials credentials = credentialsMapper.dtoToEntity(credentialsDto);
@@ -185,14 +188,65 @@ public class TweetServiceImpl implements TweetService {
 			throw new NotFoundException("No user exists with these credentials");
 		}
 		
-		
-		// Approach:
 		// retrieve the author of the reply
+		Optional<User> optionalUser = userRepository.findByCredentials(credentials);
+		User replyingUser = optionalUser.get();
+		
 		// create a new tweet for the reply
+		Tweet replyTweet = new Tweet();
+		replyTweet.setAuthor(replyingUser);		
+		// to account for the inReplyTo property
+		replyTweet.setInReplyTo(originalTweet);
+		replyTweet.setContent("Content of the reply goes here...");
+		
 		// process content for mentions and hashtags
-		// return the DTO of the saved reply tweet
+	    List<User> mentionedUsers = scanMentionedUsers(replyTweet.getContent());
+	    replyTweet.setMentionedUsers(mentionedUsers);
+	    List<Hashtag> hashtags = scanHashtags(replyTweet.getContent());
+	    replyTweet.setHashtags(hashtags);
+	    
+		
+	    // Save the reply tweet to the database
+	    Tweet savedReplyTweet = tweetRepository.saveAndFlush(replyTweet);
+		
+	    // Return the DTO of the saved reply tweet
+	    return tweetMapper.entityToDto(savedReplyTweet);
 	
-		return null;
+
+	}
+	
+	public List<User> scanMentionedUsers(String content) {
+
+		List<String> foundUsernames = new ArrayList<>();
+		String regex = "@[a-zA-Z0-9_]+";
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(content);
+		while (matcher.find()) {
+			foundUsernames.add(matcher.group().substring(1)); // The substring() call removes the @
+		}
+
+		List<User> foundActiveUsers = new ArrayList<>();
+		for (String u : foundUsernames) {
+			if (validateService.validateUsernameExists(u)) {
+				foundActiveUsers.add(userRepository.findByCredentialsUsername(u).get());
+			}
+		}
+
+        return foundActiveUsers;
+
+    }
+
+    public List<String> scanHashtags(String content) {
+
+        List<String> foundHashtags = new ArrayList<>();
+        String regex = "#[a-zA-Z0-9_]+";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(content);
+        while (matcher.find()) {
+            foundHashtags.add(matcher.group());
+        }
+
+        return foundHashtags;
 
 	}
 
