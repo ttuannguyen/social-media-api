@@ -29,7 +29,7 @@ public interface TweetService {
     
 	void createLike(CredentialsDto credentialsDto, Long id);
 	
-	TweetResponseDto createReply(CredentialsDto credentialsDto, Long id);
+	TweetResponseDto createReply(Long id, TweetRequestDto tweetRequestDto);
 
 
 }
