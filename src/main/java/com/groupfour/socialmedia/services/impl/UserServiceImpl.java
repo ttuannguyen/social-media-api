@@ -20,6 +20,7 @@ import com.groupfour.socialmedia.entities.Tweet;
 import com.groupfour.socialmedia.entities.User;
 import com.groupfour.socialmedia.exceptions.BadRequestException;
 import com.groupfour.socialmedia.exceptions.NotAuthorizedException;
+import com.groupfour.socialmedia.exceptions.NotFoundException;
 import com.groupfour.socialmedia.mappers.CredentialsMapper;
 import com.groupfour.socialmedia.mappers.ProfileMapper;
 import com.groupfour.socialmedia.mappers.TweetMapper;
@@ -268,9 +269,19 @@ public class UserServiceImpl implements UserService {
 	        throw new NotAuthorizedException("Invalid credentials provided");
 	    }
 
-	    User userFound = getUserEntity(username);
+	    Optional<User> user = userRepository.findByCredentialsUsernameAndDeletedFalse(username);
+	    if (user.isEmpty()) {
+	    	throw new NotFoundException("No user exists with username: " + username);
+	    }
+	    User userFound = user.get();    
+
+	    // update the user's profile
+	    userFound.setProfile(profileMapper.dtoToEntity(profile));
+
+	    // save the updated user to DB
+	    User updatedUser = userRepository.saveAndFlush(userFound);
 	    
-	    return null;
+	    return userMapper.entityToDto(updatedUser);
 	          
 	}
 
