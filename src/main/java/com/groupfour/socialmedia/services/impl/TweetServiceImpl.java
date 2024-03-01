@@ -1,9 +1,13 @@
 package com.groupfour.socialmedia.services.impl;
 
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.springframework.stereotype.Service;
 
 import com.groupfour.socialmedia.dtos.CredentialsDto;
 import com.groupfour.socialmedia.dtos.TweetRequestDto;
@@ -12,11 +16,9 @@ import com.groupfour.socialmedia.dtos.UserResponseDto;
 import com.groupfour.socialmedia.entities.Credentials;
 import com.groupfour.socialmedia.entities.Hashtag;
 import com.groupfour.socialmedia.entities.Tweet;
-
 import com.groupfour.socialmedia.entities.User;
 import com.groupfour.socialmedia.exceptions.BadRequestException;
 import com.groupfour.socialmedia.mappers.CredentialsMapper;
-
 import com.groupfour.socialmedia.mappers.HashtagMapper;
 import com.groupfour.socialmedia.mappers.TweetMapper;
 import com.groupfour.socialmedia.mappers.UserMapper;
@@ -25,13 +27,10 @@ import com.groupfour.socialmedia.repositories.TweetRepository;
 import com.groupfour.socialmedia.repositories.UserRepository;
 import com.groupfour.socialmedia.services.HashtagService;
 import com.groupfour.socialmedia.services.TweetService;
-
 import com.groupfour.socialmedia.services.UserService;
 import com.groupfour.socialmedia.services.ValidateService;
-import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PathVariable;
 
 @Service
 @RequiredArgsConstructor
@@ -66,19 +65,18 @@ public class TweetServiceImpl implements TweetService {
 
 	@Override
 	public TweetResponseDto createTweet(TweetRequestDto tweetRequestDto) {
-
-        Tweet tweetToCreate = new Tweet();
+ 
         Credentials creds = credentialsMapper.dtoToEntity(tweetRequestDto.getCredentials());
         String content = tweetRequestDto.getContent();
         String username = creds.getUsername();
         String password = creds.getPassword();
-
+        User author = userService.getUserEntity(username);
         if (!validateService.validateCredentialsExist(username, password))
         {
             throw new BadRequestException("Invalid credentials received");
         }
-
-        User author = userRepository.findByCredentialsUsername(username).get();
+        Tweet tweetToCreate = tweetRepository.saveAndFlush(tweetMapper.requestDtoToEntity(tweetRequestDto));
+        
         tweetToCreate.setAuthor(author);
         tweetToCreate.setContent(content);
         tweetRepository.save(tweetToCreate); // Saving the tweet here before saving users and hashtags that reference it

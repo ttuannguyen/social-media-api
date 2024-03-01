@@ -7,6 +7,7 @@ import com.groupfour.socialmedia.dtos.TweetResponseDto;
 
 import com.groupfour.socialmedia.dtos.UserRequestDto;
 import com.groupfour.socialmedia.dtos.UserResponseDto;
+import com.groupfour.socialmedia.entities.User;
 
 public interface UserService {
 
@@ -29,5 +30,7 @@ public interface UserService {
 	void unfollow(CredentialsDto credentialsDto, String username);
 
 	List<TweetResponseDto> getMentions(String username);
+
+	User getUserEntity(String username);
 
 }

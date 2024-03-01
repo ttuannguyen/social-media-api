@@ -45,7 +45,8 @@ public class UserServiceImpl implements UserService {
 	private final TweetRepository tweetRepository;
 	private final TweetMapper tweetMapper;
 
-	private User getUserEntity(String username) {
+	@Override
+	public User getUserEntity(String username) {
 		if(!validateService.validateUsernameExists(username)) {
 			throw new BadRequestException("No user exists with username: " + username);
 
