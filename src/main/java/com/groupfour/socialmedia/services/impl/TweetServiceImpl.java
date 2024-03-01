@@ -70,7 +70,13 @@ public class TweetServiceImpl implements TweetService {
 	public TweetResponseDto createTweet(TweetRequestDto tweetRequestDto) {
  
         Credentials creds = credentialsMapper.dtoToEntity(tweetRequestDto.getCredentials());
+		if (creds == null) {
+			throw new BadRequestException("Credentials are required");
+		}
         String content = tweetRequestDto.getContent();
+		if (content == null) {
+			throw new BadRequestException("Content is required");
+		}
         String username = creds.getUsername();
         String password = creds.getPassword();
         User author = userService.getUserEntity(username);
