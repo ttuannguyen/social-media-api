@@ -91,7 +91,8 @@ public class TweetServiceImpl implements TweetService {
         List<String> newHashtags = new ArrayList<>();
         List<String> existingHashtags = new ArrayList<>();
         for (String h : hashtagStrings) {
-            if(!validateService.validateHashtagExists(h)) {
+			Optional<Hashtag> optionalHashtag = hashtagRepository.findByLabel(h);
+            if(optionalHashtag.isEmpty()) {
                 newHashtags.add(h);
             }
             else {
