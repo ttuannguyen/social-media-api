@@ -325,18 +325,19 @@ public class TweetServiceImpl implements TweetService {
 		replyTweet.setInReplyTo(originalTweet);
 		replyTweet.setContent("Content of the reply goes here...");
 		
-		// process content for mentions and hashtags
+		// TODO: process content for mentions and hashtags
 	    List<User> mentionedUsers = scanMentionedUsers(replyTweet.getContent());
 	    replyTweet.setMentionedUsers(mentionedUsers);
-	    List<Hashtag> hashtags = scanHashtags(replyTweet.getContent());
-	    replyTweet.setHashtags(hashtags);
-	    
+//
+//	    List<Hashtag> hashtags = scanHashtags(replyTweet.getContent());
+//	    replyTweet.setHashtags(hashtags);
 		
 	    // Save the reply tweet to the database
 	    Tweet savedReplyTweet = tweetRepository.saveAndFlush(replyTweet);
 		
 	    // Return the DTO of the saved reply tweet
 	    return tweetMapper.entityToDto(savedReplyTweet);
+	    
 	
 
 	}

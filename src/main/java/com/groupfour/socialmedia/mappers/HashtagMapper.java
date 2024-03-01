@@ -1,6 +1,5 @@
 package com.groupfour.socialmedia.mappers;
 
-
 import java.util.List;
 
 import org.mapstruct.Mapper;
@@ -13,7 +12,7 @@ public interface HashtagMapper {
 	
 	HashtagResponseDto hashtagEntityToDto(Hashtag entity);
 	
-	List<HashtagResponseDto> hashtagEntitiesToDtos(List<Hashtag> entities);
+	List<HashtagResponseDto> hashtagEntitiesToDtos(List<Hashtag> hashtags);
 
 	List<Hashtag> dtosToHashtagEntities(List<HashtagResponseDto> hashtagResponseDtos);
 

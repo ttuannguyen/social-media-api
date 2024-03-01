@@ -11,6 +11,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.groupfour.socialmedia.dtos.CredentialsDto;
+import com.groupfour.socialmedia.dtos.ProfileDto;
 import com.groupfour.socialmedia.dtos.TweetResponseDto;
 import com.groupfour.socialmedia.dtos.UserRequestDto;
 import com.groupfour.socialmedia.dtos.UserResponseDto;
@@ -228,6 +229,21 @@ public class UserServiceImpl implements UserService {
 		}
 		
 		return userMapper.entitiesToDtos(followers);
+	}
+
+	@Override
+	public UserResponseDto updateUser(CredentialsDto credentials, ProfileDto profile) {
+	    String username = credentials.getUsername();
+	    String password = credentials.getPassword();
+
+	    if (!validateService.validateCredentialsExist(username, password)) {
+	        throw new NotAuthorizedException("Invalid credentials provided");
+	    }
+
+	    User userFound = getUserEntity(username);
+	    
+	    return null;
+	          
 	}
 
 }

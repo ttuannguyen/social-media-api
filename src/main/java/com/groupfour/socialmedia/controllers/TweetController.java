@@ -68,7 +68,6 @@ public class TweetController {
     }
     
     
-    // MY CREATED ENDPOINTS
     @GetMapping("/{id}/tags")
     public List<HashtagResponseDto> getTagsOfTweet(@PathVariable Long id) {
     	return tweetService.getTagsOfTweet(id);

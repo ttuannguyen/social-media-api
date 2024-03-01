@@ -1,5 +1,6 @@
 package com.groupfour.socialmedia.services.impl;
 
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -60,20 +61,13 @@ public class HashtagServiceImpl implements HashtagService {
 		Hashtag hashtagFound = optionalHashtag.get();
 		
 		
-		// JPA derived query approach		
-		// TODO: The tweets should appear in reverse-chronological order. 
-//		List<Tweet> nonDeletedTweets = tweetRepository.findAllByDeletedFalse();
-		
-		List<Tweet> returnedTweets = new ArrayList<>();
-		
+		List<Tweet> returnedTweets = new ArrayList<>();		
 		for (Tweet t : hashtagFound.getTaggedTweets()) {
 			if (!t.isDeleted() && t.getContent().contains("#" +label)) {
 				returnedTweets.add(t);
 			}
-		}
-		
+		}		
 		Collections.sort(returnedTweets, Comparator.comparing(Tweet::getPosted).reversed());
-		
 		
         return tweetMapper.entitiesToDtos(returnedTweets);
 	}
