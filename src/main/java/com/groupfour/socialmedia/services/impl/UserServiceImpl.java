@@ -130,8 +130,36 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserResponseDto createNewUser(UserRequestDto userRequestDto) {
-	    CredentialsDto credentialsDto = userRequestDto.getCredentials();
-	    String username = credentialsDto.getUsername();
+
+		if (userRequestDto == null)
+		{
+			throw new BadRequestException("Empty request");
+		}
+		if (userRequestDto.getCredentials() == null)
+		{
+			throw new BadRequestException("No credentials were provided");
+		}
+		if (userRequestDto.getProfile() == null)
+		{
+			throw new BadRequestException("No profile was provided");
+		}
+		if (userRequestDto.getProfile().getEmail() == null)
+		{
+			throw new BadRequestException("No email was provided");
+		}
+
+		CredentialsDto credentialsDto = userRequestDto.getCredentials();
+
+		if (credentialsDto.getUsername() == null)
+		{
+			throw new BadRequestException("No username was provided");
+		}
+		if (credentialsDto.getPassword() == null)
+		{
+			throw new BadRequestException("No password was provided");
+		}
+
+		String username = credentialsDto.getUsername();
 
 	    if (!validateService.validateUsername(username)) {
 	        Optional<User> existingUserOptional = userRepository.findByCredentialsUsername(username);
