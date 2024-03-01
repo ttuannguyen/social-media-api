@@ -103,6 +103,10 @@ public class UserServiceImpl implements UserService {
 	}
 
 	public List<TweetResponseDto> getMentions(String username) {
+		if(!validateService.validateUsernameExists(username)) {
+			throw new BadRequestException("No user exists with username: " + username);
+
+		}
 		List<Tweet> mentionTweets = new ArrayList<>();
 		for (Tweet t : tweetRepository.findAllByDeletedFalse()) {
 			if (t.getContent() == null) {
@@ -112,7 +116,7 @@ public class UserServiceImpl implements UserService {
 				mentionTweets.add(t);
 			}
 		}
-		return tweetMapper.entitiesToDtos(mentionTweets);
+		return reverseChronological(tweetMapper.entitiesToDtos(mentionTweets));
 	}
 
 	
