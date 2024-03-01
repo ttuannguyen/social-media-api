@@ -10,9 +10,8 @@ import lombok.NoArgsConstructor;
 public class HashtagResponseDto {
 
 	private String label;
-
 	private Timestamp firstUsed;
-
 	private Timestamp lastUsed;
+
 
 }

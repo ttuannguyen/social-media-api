@@ -28,17 +28,16 @@ public class Hashtag {
 	@CreationTimestamp
 	private Timestamp firstUsed;
 	
+
 	@UpdateTimestamp
 	private Timestamp lastUsed;
-	
-//	@ManyToMany
-//	@JoinTable(name="tweet_hashtags")
-//	private List<Tweet> taggedTweets;
-	
+
+
 	@ManyToMany
 	@JoinTable(name="tweet_hashtags",
-	joinColumns = @JoinColumn(name="hashtag_id"),
-	inverseJoinColumns = @JoinColumn(name="tweet_id"))
+			joinColumns = @JoinColumn(name="hashtag_id"),
+			inverseJoinColumns = @JoinColumn(name="tweet_id"))
+
 	private List<Tweet> taggedTweets;
 
 }

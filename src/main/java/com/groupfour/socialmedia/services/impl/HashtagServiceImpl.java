@@ -21,22 +21,33 @@ import com.groupfour.socialmedia.services.HashtagService;
 
 import lombok.RequiredArgsConstructor;
 
+
 @Service
 @RequiredArgsConstructor
 public class HashtagServiceImpl implements HashtagService {
 
 	private final HashtagRepository hashtagRepository;
-	private final TweetRepository tweetRepository;
+
 	private final HashtagMapper hashtagMapper;
+	private final TweetRepository tweetRepository;
 	private final TweetMapper tweetMapper;
-	
+
 	@Override
 	public List<HashtagResponseDto> getAllHashtags() {
-	
+
 		return hashtagMapper.hashtagEntitiesToDtos(hashtagRepository.findAll());
-		
 	}
 
+	@Override
+	public HashtagResponseDto createHashtag(String label, Tweet tweet) {
+		Hashtag hashtag = new Hashtag();
+		hashtag.setLabel(label);
+		List<Tweet> taggedTweets = new ArrayList<>();
+		taggedTweets.add(tweet);
+
+		return hashtagMapper.hashtagEntityToDto(hashtagRepository.saveAndFlush(hashtag));
+	}
+	
 	@Override
 	public  List<TweetResponseDto> getTweetsfromTag(String label) {
 		
@@ -65,8 +76,6 @@ public class HashtagServiceImpl implements HashtagService {
 		
 		
         return tweetMapper.entitiesToDtos(returnedTweets);
-		
-
 	}
 
 }

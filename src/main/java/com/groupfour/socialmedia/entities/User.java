@@ -61,7 +61,13 @@ public class User {
 	private List<Tweet> mentions = new ArrayList<>();
 	
 
+	public boolean getDeleted() {
+		return deleted;
+	}
 	
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
 	
 	
 }

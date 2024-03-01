@@ -1,16 +1,16 @@
 package com.groupfour.socialmedia.dtos;
 
-import com.groupfour.socialmedia.entities.Tweet;
+import java.sql.Timestamp;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.sql.Timestamp;
 
 @NoArgsConstructor
 @Data
 public class TweetResponseDto {
 	
-		private Long id;
+
+	private Long id;
 
     private UserResponseDto author;
 

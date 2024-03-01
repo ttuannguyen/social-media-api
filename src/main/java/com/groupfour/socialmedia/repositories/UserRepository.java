@@ -1,24 +1,26 @@
 package com.groupfour.socialmedia.repositories;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.groupfour.socialmedia.dtos.CredentialsDto;
 import com.groupfour.socialmedia.entities.Credentials;
 import com.groupfour.socialmedia.entities.User;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long>{
-	
-	Optional<User> findByCredentialsUsername(String username);
+public interface UserRepository extends JpaRepository<User, Long> {
 
 	Optional<User> findByCredentialsUsernameAndDeletedFalse(String username);
+
+	Optional<User> findByCredentialsUsername(String username);
+
+	List<User> findAllByDeletedFalse();
+
+	Optional<User> findByCredentialsUsernameAndCredentialsPasswordAndDeletedFalse(String username, String password);
 	
 	// created to assist the createLike() method in TweetServiceImpl
 	Optional<User> findByCredentials(Credentials credentials);
 
-	Optional<User> findByCredentialsUsernameAndCredentialsPasswordAndDeletedFalse(String username, String password);
-	
 }

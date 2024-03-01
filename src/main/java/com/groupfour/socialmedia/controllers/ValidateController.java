@@ -31,6 +31,5 @@ public class ValidateController {
 	public boolean validateHashtagExists(@PathVariable String label) {
 		return validateService.validateHashtagExists(label);
 	}
-	
 
 }

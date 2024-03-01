@@ -1,21 +1,21 @@
 package com.groupfour.socialmedia.entities;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import java.util.ArrayList;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.JoinColumn;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor
@@ -46,9 +46,10 @@ public class Tweet {
     @OneToMany(mappedBy = "inReplyTo")
     private List<Tweet> replies;
 
+	
     @OneToMany(mappedBy = "repostOf")
     private List<Tweet> reposts;
-	
+    
 	@ManyToMany(mappedBy="likedTweets")
 	private List<User> likedByUsers = new ArrayList<>();
 	
@@ -59,14 +60,13 @@ public class Tweet {
 	private List<User> mentionedUsers = new ArrayList<>();
 	
 	private boolean deleted = false;
-	
-//	@ManyToMany(mappedBy="taggedTweets")
-//	private List<Hashtag> hashtags;
-	
+
+
     @ManyToMany
-	@JoinTable(name="tweet_hashtags",
-	joinColumns = @JoinColumn(name="tweet_id"),
-	inverseJoinColumns = @JoinColumn(name="hashtag_id"))
-	private List<Hashtag> hashtags;
+    @JoinTable(name="tweet_hashtags",
+            joinColumns = @JoinColumn(name="tweet_id"),
+            inverseJoinColumns = @JoinColumn(name="hashtag_id"))
+    private List<Hashtag> hashtags;
+
 
 }
