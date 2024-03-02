@@ -285,25 +285,15 @@ public class TweetServiceImpl implements TweetService {
 	}
 
 	@Override
-	public void createLike(CredentialsDto credentialsDto, Long id) {
+	public List<UserResponseDto> getUsersWhoLiked(Long id) {
 
-		// TODO: test this method
 		Optional<Tweet> optionalTweet = tweetRepository.findByIdAndDeletedFalse(id);
 		if (optionalTweet.isEmpty()) {
-			throw new NotFoundException("No tweet exists with this id:" + id);
+			throw new BadRequestException("No tweet found with id: " + id);
 		}
 		Tweet tweet = optionalTweet.get();
+		return userMapper.entitiesToDtos(tweet.getLikedByUsers());
 
-		Credentials credentials = credentialsMapper.dtoToEntity(credentialsDto);
-
-		Optional<User> optionalUser = userRepository.findByCredentials(credentials);
-		if (optionalTweet.isEmpty()) {
-			throw new NotFoundException("No user exists with these credentials");
-		}
-		User user = optionalUser.get();
-
-		tweet.getLikedByUsers().add(user);
-		tweetRepository.saveAndFlush(tweet);
 
 	}
 

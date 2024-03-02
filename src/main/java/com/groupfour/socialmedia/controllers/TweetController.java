@@ -73,9 +73,9 @@ public class TweetController {
     	return tweetService.getTagsOfTweet(id);
     }
     
-    @PostMapping("/{id}/like")
-    public void createLike(@RequestBody CredentialsDto credentialsDto, @PathVariable Long id) {
-    	tweetService.createLike(credentialsDto, id);
+    @GetMapping("/{id}/likes")
+    public List<UserResponseDto> getUsersWhoLiked(@PathVariable Long id) {
+    	return tweetService.getUsersWhoLiked(id);
     }
     
     @PostMapping("/{id}/reply")
