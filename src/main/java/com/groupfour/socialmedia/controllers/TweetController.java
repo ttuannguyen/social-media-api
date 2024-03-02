@@ -84,11 +84,6 @@ public class TweetController {
     	return tweetService.createReply(id, tweetRequestDto);
     }
     
-    @GetMapping("/{id}/likes")
-    public List<UserResponseDto> getUsersWhoLikedTweet(@PathVariable Long id) {
-    	return tweetService.getUsersWhoLikedTweet(id);
-    }
-    
     @GetMapping("/{id}/context")
     public ContextDto getContext(@PathVariable Long id) {
     	return tweetService.getContext(id);
