@@ -157,6 +157,47 @@ public class TweetServiceImpl implements TweetService {
 	}
 
 	@Override
+	public void likeTweet(CredentialsDto credentialsDto, Long id) {
+
+		Credentials creds = credentialsMapper.dtoToEntity(credentialsDto);
+		String username = creds.getUsername();
+		String password = creds.getPassword();
+
+		if (!validateService.validateCredentialsExist(username, password)) {
+			throw new BadRequestException("Invalid credentials received");
+		}
+
+		User liker = userService.getUserEntity(username);
+
+		Optional<Tweet> optionalTweet = tweetRepository.findByIdAndDeletedFalse(id);
+		if (optionalTweet.isEmpty()) {
+			throw new BadRequestException("No tweet found with id: " + id);
+		}
+		Tweet tweet = optionalTweet.get();
+
+		List<User> usersLiked = tweet.getLikedByUsers();
+		List<Tweet> likedTweets = liker.getLikedTweets();
+
+
+		boolean alreadyLiked = false;
+		for (User u : usersLiked) {
+			if (u.getCredentials().equals(creds)) {
+				alreadyLiked = true;
+				System.out.println("User has already liked the tweet");
+			}
+		}
+
+		if (!alreadyLiked) {
+			usersLiked.add(liker);
+			likedTweets.add(tweet);
+			tweetRepository.saveAndFlush(tweet);
+			userRepository.saveAndFlush(liker);
+		}
+
+
+	}
+
+	@Override
 	public List<TweetResponseDto> getReposts(Long id) {
 
 		Tweet ogTweet = getTweetEntity(id);

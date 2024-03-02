@@ -36,5 +36,5 @@ public interface TweetService {
 	
 	ContextDto getContext(Long id);
 
-
+    void likeTweet(CredentialsDto credentialsDto, Long id);
 }

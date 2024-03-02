@@ -83,6 +83,11 @@ public class TweetController {
     public TweetResponseDto createReply(@PathVariable Long id, @RequestBody TweetRequestDto tweetRequestDto, CredentialsDto credentialsDto) {
     	return tweetService.createReply(id, tweetRequestDto);
     }
+
+    @PostMapping("/{id}/like")
+    public void likeTweet(@RequestBody CredentialsDto credentialsDto, @PathVariable Long id) {
+        tweetService.likeTweet(credentialsDto, id);
+    }
     
     @GetMapping("/{id}/context")
     public ContextDto getContext(@PathVariable Long id) {
