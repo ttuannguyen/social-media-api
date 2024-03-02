@@ -333,53 +333,95 @@ public class TweetServiceImpl implements TweetService {
 	}
 
 	@Override
-	public TweetResponseDto createReply(Long id, TweetRequestDto tweetRequestDto) {
+	public TweetResponseDto createReply(TweetRequestDto tweetRequestDto, Long id) {
 
-		Tweet originalTweet = getTweetEntity(id);
+		Optional<Tweet> optionalTweet = tweetRepository.findById(id);
+		// If that tweet is deleted or otherwise doesn't exist, an error should be sent
+		// in lieu of a response.
+		if (optionalTweet.isEmpty()) {
+			throw new NotFoundException("No tweet exists with this id:" + id);
+		}
+		Tweet tweetRepliedTo = optionalTweet.get();
 
-		Credentials credentials = credentialsMapper.dtoToEntity(tweetRequestDto.getCredentials());
-		String username = credentials.getUsername();
-		String password = credentials.getPassword();
+		Credentials creds = credentialsMapper.dtoToEntity(tweetRequestDto.getCredentials());
+		if (creds == null) {
+			throw new BadRequestException("Credentials are required");
+		}
 		String content = tweetRequestDto.getContent();
-
-		if (originalTweet == null || !originalTweet.isDeleted()) {
-			throw new NotFoundException("No tweet exists with this id: " + id);
+		if (content == null) {
+			throw new BadRequestException("Content is required");
 		}
-
+		String username = creds.getUsername();
+		String password = creds.getPassword();
+		User author = userService.getUserEntity(username);
 		if (!validateService.validateCredentialsExist(username, password)) {
-			throw new NotFoundException("No user exists with these credentials");
+			throw new BadRequestException("Invalid credentials received");
 		}
+		Tweet replyTweet = tweetRepository.saveAndFlush(tweetMapper.requestDtoToEntity(tweetRequestDto));
 
-		// retrieve the author of the reply
-		Optional<User> optionalUser = userRepository.findByCredentials(credentials);
-		User replyingUser = optionalUser.get();
-
-		// create a new tweet for the reply
-		Tweet replyTweet = new Tweet();
-		replyTweet.setAuthor(replyingUser);
-		// to account for the inReplyTo property
-		replyTweet.setInReplyTo(originalTweet);
+		replyTweet.setAuthor(author);
 		replyTweet.setContent(content);
+		tweetRepository.save(replyTweet); // Saving the tweet here before saving users and hashtags that reference it
 
-		// process content for mentions and hashtags
-		List<User> mentionedUsers = scanMentionedUsers(replyTweet.getContent());
-		replyTweet.setMentionedUsers(mentionedUsers);
+		List<User> mentionedUsers = scanMentionedUsers(content);
+		List<String> hashtagStrings = scanHashtags(content);
 
-		List<String> foundHashtags = scanHashtags(replyTweet.getContent());
-		List<Hashtag> hashtags = new ArrayList<>();
-
-		for (String h : foundHashtags) {
+		// Determine which hashtags are new and which are not
+		List<String> newHashtags = new ArrayList<>();
+		List<String> existingHashtags = new ArrayList<>();
+		for (String h : hashtagStrings) {
 			Optional<Hashtag> optionalHashtag = hashtagRepository.findByLabel(h);
-			if (optionalHashtag.isPresent()) {
-				hashtags.add(optionalHashtag.get());
+			if (optionalHashtag.isEmpty()) {
+				newHashtags.add(h);
+			} else {
+				existingHashtags.add(h);
 			}
 		}
 
-		replyTweet.setHashtags(hashtags);
+		// Create + Save all new hashtags
+		for (String h : newHashtags) {
+			hashtagService.createHashtag(h, replyTweet); // This includes a saveAndFlush()
+		}
 
-		Tweet savedReplyTweet = tweetRepository.saveAndFlush(replyTweet);
+		// Update + Save all existing hashtags
+		for (String h : existingHashtags) {
+			Hashtag hashtag = hashtagRepository.findByLabel(h).get();
 
-		return tweetMapper.entityToDto(savedReplyTweet);
+			List<Tweet> taggedTweets = hashtag.getTaggedTweets();
+			taggedTweets.add(replyTweet);
+			hashtag.setTaggedTweets(taggedTweets);
+			hashtag.setLastUsed(new Timestamp(System.currentTimeMillis()));
+
+			hashtagRepository.saveAndFlush(hashtag);
+		}
+
+		// Update all mentionedUsers' mentioned list
+		for (User u : replyTweet.getMentionedUsers()) {
+			List<Tweet> mentions = u.getMentions();
+			mentions.add(replyTweet);
+			u.setMentions(mentions);
+		}
+
+		// Set new tweet's hashtag list
+		List<Hashtag> hashtagList = new ArrayList<>();
+		for (String s : hashtagStrings) {
+			Hashtag hashtag = hashtagRepository.findByLabel(s).get();
+			hashtagList.add(hashtag);
+		}
+		replyTweet.setHashtags(hashtagList);
+
+		// Set new tweet's mentionedUsers list
+		replyTweet.setMentionedUsers(mentionedUsers);
+
+		List<Tweet> replies = tweetRepliedTo.getReplies();
+		replies.add(replyTweet);
+		tweetRepliedTo.setReplies(replies);
+
+		replyTweet.setInReplyTo(tweetRepliedTo);
+		tweetRepository.saveAndFlush(replyTweet);
+		tweetRepository.saveAndFlush(tweetRepliedTo);
+
+		return tweetMapper.entityToDto(replyTweet);
 
 	}
 

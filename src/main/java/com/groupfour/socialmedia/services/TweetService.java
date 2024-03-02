@@ -30,7 +30,7 @@ public interface TweetService {
 
     List<UserResponseDto> getUsersWhoLiked(Long id);
 	
-	TweetResponseDto createReply(Long id, TweetRequestDto tweetRequestDto);
+	TweetResponseDto createReply(TweetRequestDto tweetRequestDto, Long id);
 	
 	List<UserResponseDto> getUsersWhoLikedTweet(Long id);
 	

@@ -80,8 +80,8 @@ public class TweetController {
     }
     
     @PostMapping("/{id}/reply")
-    public TweetResponseDto createReply(@PathVariable Long id, @RequestBody TweetRequestDto tweetRequestDto, CredentialsDto credentialsDto) {
-    	return tweetService.createReply(id, tweetRequestDto);
+    public TweetResponseDto createReply(@RequestBody TweetRequestDto tweetRequestDto, @PathVariable Long id) {
+    	return tweetService.createReply(tweetRequestDto, id);
     }
 
     @PostMapping("/{id}/like")
