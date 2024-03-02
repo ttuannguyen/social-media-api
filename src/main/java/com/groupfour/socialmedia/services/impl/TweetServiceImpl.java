@@ -262,7 +262,7 @@ public class TweetServiceImpl implements TweetService {
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(content);
         while (matcher.find()) {
-            foundHashtags.add(matcher.group());
+            foundHashtags.add(matcher.group().substring(1));
         }
 
         return foundHashtags;
