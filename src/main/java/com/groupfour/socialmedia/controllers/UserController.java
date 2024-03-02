@@ -86,8 +86,8 @@ public class UserController {
 	}	
 	
 	@PatchMapping("/@{username}")
-	public UserResponseDto updateUser(@RequestBody CredentialsDto credentials, ProfileDto profile) {
-		return userService.updateUser(credentials, profile);
+	public UserResponseDto updateUser(@RequestBody UserRequestDto userRequestDto, @PathVariable String username) {
+		return userService.updateUser(userRequestDto, username);
 	}
 
 }

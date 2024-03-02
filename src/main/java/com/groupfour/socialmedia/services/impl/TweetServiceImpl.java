@@ -253,13 +253,14 @@ public class TweetServiceImpl implements TweetService {
 
 	public List<String> scanHashtags(String content) {
 
+
 		List<String> foundHashtags = new ArrayList<>();
-		String regex = "#[a-zA-Z0-9_]+";
-		Pattern pattern = Pattern.compile(regex);
-		Matcher matcher = pattern.matcher(content);
-		while (matcher.find()) {
-			foundHashtags.add(matcher.group());
-		}
+        String regex = "#[a-zA-Z0-9_]+";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(content);
+        while (matcher.find()) {
+            foundHashtags.add(matcher.group().substring(1));
+        }
 
 		return foundHashtags;
 
