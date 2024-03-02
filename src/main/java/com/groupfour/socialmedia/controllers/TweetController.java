@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.groupfour.socialmedia.dtos.ContextDto;
 import com.groupfour.socialmedia.dtos.CredentialsDto;
 import com.groupfour.socialmedia.dtos.HashtagResponseDto;
 import com.groupfour.socialmedia.dtos.TweetRequestDto;
@@ -83,6 +84,15 @@ public class TweetController {
     	return tweetService.createReply(id, tweetRequestDto);
     }
     
+    @GetMapping("/{id}/likes")
+    public List<UserResponseDto> getUsersWhoLikedTweet(@PathVariable Long id) {
+    	return tweetService.getUsersWhoLikedTweet(id);
+    }
+    
+    @GetMapping("/{id}/context")
+    public ContextDto getContext(@PathVariable Long id) {
+    	return tweetService.getContext(id);
+    }
     
 
 

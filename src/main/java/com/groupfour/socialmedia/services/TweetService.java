@@ -1,6 +1,7 @@
 package com.groupfour.socialmedia.services;
 
 
+import com.groupfour.socialmedia.dtos.ContextDto;
 import com.groupfour.socialmedia.dtos.CredentialsDto;
 import com.groupfour.socialmedia.dtos.HashtagResponseDto;
 import com.groupfour.socialmedia.dtos.TweetRequestDto;
@@ -30,6 +31,10 @@ public interface TweetService {
     List<UserResponseDto> getUsersWhoLiked(Long id);
 	
 	TweetResponseDto createReply(Long id, TweetRequestDto tweetRequestDto);
+	
+	List<UserResponseDto> getUsersWhoLikedTweet(Long id);
+	
+	ContextDto getContext(Long id);
 
 
 }
