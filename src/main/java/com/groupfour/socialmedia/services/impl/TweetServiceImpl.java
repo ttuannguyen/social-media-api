@@ -262,7 +262,7 @@ public class TweetServiceImpl implements TweetService {
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(content);
         while (matcher.find()) {
-            foundHashtags.add(matcher.group().substring(1));
+            foundHashtags.add(matcher.group());
         }
 
         return foundHashtags;
@@ -276,11 +276,10 @@ public class TweetServiceImpl implements TweetService {
 		// If that tweet is deleted or otherwise doesn't exist, an error should be sent
 		// in lieu of a response.
 		if (optionalTweet.isEmpty()) {
-			System.out.println("-----------------------------GETTAGSOFTWEET - empty");
 			throw new NotFoundException("No tweet exists with this id:" + id);
 		}
-		System.out.println("-----------------------------GETTAGSOFTWEET - not empty");
 		Tweet tweetFound = optionalTweet.get();
+
 		// IMPORTANT Remember that tags and mentions must be parsed by the server!
 		return hashtagMapper.hashtagEntitiesToDtos(tweetFound.getHashtags());
 	}
@@ -309,14 +308,19 @@ public class TweetServiceImpl implements TweetService {
 	}
 
 	@Override
-	public TweetResponseDto createReply(CredentialsDto credentialsDto, Long id) {
+	public TweetResponseDto createReply(Long id, TweetRequestDto tweetRequestDto) {
 
 		Tweet originalTweet = getTweetEntity(id);
 		
 		
-		Credentials credentials = credentialsMapper.dtoToEntity(credentialsDto);
+		Credentials credentials = credentialsMapper.dtoToEntity(tweetRequestDto.getCredentials());
 		String username = credentials.getUsername();
 		String password = credentials.getPassword();
+		String content = tweetRequestDto.getContent();
+
+		if (originalTweet == null || !originalTweet.isDeleted()) {
+			throw new NotFoundException("No tweet exists with this id: " + id);
+		}
 
 		if (!validateService.validateCredentialsExist(username, password)) {
 			throw new NotFoundException("No user exists with these credentials");
@@ -331,22 +335,27 @@ public class TweetServiceImpl implements TweetService {
 		replyTweet.setAuthor(replyingUser);		
 		// to account for the inReplyTo property
 		replyTweet.setInReplyTo(originalTweet);
-		replyTweet.setContent("Content of the reply goes here...");
+		replyTweet.setContent(content);
 		
-		// TODO: process content for mentions and hashtags
+		// process content for mentions and hashtags
 	    List<User> mentionedUsers = scanMentionedUsers(replyTweet.getContent());
 	    replyTweet.setMentionedUsers(mentionedUsers);
-//
-//	    List<Hashtag> hashtags = scanHashtags(replyTweet.getContent());
-//	    replyTweet.setHashtags(hashtags);
-		
-	    // Save the reply tweet to the database
-	    Tweet savedReplyTweet = tweetRepository.saveAndFlush(replyTweet);
-		
-	    // Return the DTO of the saved reply tweet
-	    return tweetMapper.entityToDto(savedReplyTweet);
 	    
-	
+	    List<String> foundHashtags = scanHashtags(replyTweet.getContent());
+	    List<Hashtag> hashtags = new ArrayList<>();
+
+	    for (String h : foundHashtags) {
+	    	Optional<Hashtag> optionalHashtag = hashtagRepository.findByLabel(h);
+	    	if(optionalHashtag.isPresent()) {
+	    		hashtags.add(optionalHashtag.get());
+			}
+	    }	
+
+	    replyTweet.setHashtags(hashtags);
+	    
+	    Tweet savedReplyTweet = tweetRepository.saveAndFlush(replyTweet);
+
+	    return tweetMapper.entityToDto(savedReplyTweet);
 
 	}
 
