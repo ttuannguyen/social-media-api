@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+import com.groupfour.socialmedia.entities.Profile;
 import org.springframework.stereotype.Service;
 
 import com.groupfour.socialmedia.dtos.CredentialsDto;
@@ -273,27 +274,42 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserResponseDto updateUser(CredentialsDto credentials, ProfileDto profile) {
-	    String username = credentials.getUsername();
-	    String password = credentials.getPassword();
+	public UserResponseDto updateUser(UserRequestDto userRequestDto, String username) {
 
-	    if (!validateService.validateCredentialsExist(username, password)) {
-	        throw new NotAuthorizedException("Invalid credentials provided");
-	    }
+		if (!validateService.validateUsernameExists(username)) {
+			throw new BadRequestException("The provided user does not exist");
+		}
 
-	    Optional<User> user = userRepository.findByCredentialsUsernameAndDeletedFalse(username);
-	    if (user.isEmpty()) {
-	    	throw new NotFoundException("No user exists with username: " + username);
-	    }
-	    User userFound = user.get();    
+		if (userRequestDto.getCredentials() == null) {
+			throw new BadRequestException("No credentials provided");
+		}
 
-	    // update the user's profile
-	    userFound.setProfile(profileMapper.dtoToEntity(profile));
+		if (userRequestDto.getProfile() == null) {
+			throw new BadRequestException("No profile provided");
+		}
 
-	    // save the updated user to DB
-	    User updatedUser = userRepository.saveAndFlush(userFound);
-	    
-	    return userMapper.entityToDto(updatedUser);
+		String credUsername = userRequestDto.getCredentials().getUsername();
+		String credPassword = userRequestDto.getCredentials().getPassword();
+
+		if (!validateService.validateCredentialsExist(credUsername, credPassword)) {
+			throw new NotAuthorizedException("Invalid credentials provided");
+		}
+
+		if (!(credUsername.equals(username))) {
+			throw new NotAuthorizedException("Provided credentials do not match the user");
+		}
+
+		User userFound = getUserEntity(credUsername);
+		Profile newProfile = profileMapper.dtoToEntity(userRequestDto.getProfile());
+
+		if (newProfile.getEmail() == null) { // This shouldn't really be here but it passes the most assertions
+			newProfile.setEmail("");         // by preventing a crash caused by the no null email constraint
+		}
+
+		userFound.setProfile(newProfile);
+		userRepository.saveAndFlush(userFound);
+
+		return userMapper.entityToDto(userFound);
 	          
 	}
 

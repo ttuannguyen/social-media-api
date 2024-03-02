@@ -35,6 +35,6 @@ public interface UserService {
 	
 	List<UserResponseDto> getUserFollowers(String username);
 
-	UserResponseDto updateUser(CredentialsDto credentials, ProfileDto profile);
+	UserResponseDto updateUser(UserRequestDto userRequestDto, String username);
 
 }
