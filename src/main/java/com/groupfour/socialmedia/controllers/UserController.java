@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.groupfour.socialmedia.dtos.CredentialsDto;
-import com.groupfour.socialmedia.dtos.ProfileDto;
 import com.groupfour.socialmedia.dtos.TweetResponseDto;
 import com.groupfour.socialmedia.dtos.UserRequestDto;
 import com.groupfour.socialmedia.dtos.UserResponseDto;
@@ -86,7 +85,8 @@ public class UserController {
 	}	
 	
 	@PatchMapping("/@{username}")
-	public UserResponseDto updateUser(@PathVariable String username, @RequestBody UserRequestDto userRequestDto) {
+
+	public UserResponseDto updateUser(@RequestBody UserRequestDto userRequestDto, @PathVariable String username) {
 		return userService.updateUser(userRequestDto, username);
 	}
 

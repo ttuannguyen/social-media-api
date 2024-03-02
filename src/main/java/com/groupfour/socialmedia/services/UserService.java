@@ -3,7 +3,6 @@ package com.groupfour.socialmedia.services;
 import java.util.List;
 
 import com.groupfour.socialmedia.dtos.CredentialsDto;
-import com.groupfour.socialmedia.dtos.ProfileDto;
 import com.groupfour.socialmedia.dtos.TweetResponseDto;
 import com.groupfour.socialmedia.dtos.UserRequestDto;
 import com.groupfour.socialmedia.dtos.UserResponseDto;
@@ -34,7 +33,6 @@ public interface UserService {
 	User getUserEntity(String username);
 	
 	List<UserResponseDto> getUserFollowers(String username);
-
 
 	UserResponseDto updateUser(UserRequestDto userRequestDto, String username);
 

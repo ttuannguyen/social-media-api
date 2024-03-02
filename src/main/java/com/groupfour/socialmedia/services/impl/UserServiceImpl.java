@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+import com.groupfour.socialmedia.entities.Profile;
 import org.springframework.stereotype.Service;
 
 import com.groupfour.socialmedia.dtos.CredentialsDto;

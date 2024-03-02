@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.groupfour.socialmedia.dtos.ContextDto;
 import com.groupfour.socialmedia.dtos.CredentialsDto;
 import com.groupfour.socialmedia.dtos.HashtagResponseDto;
 import com.groupfour.socialmedia.dtos.TweetRequestDto;
@@ -73,16 +74,25 @@ public class TweetController {
     	return tweetService.getTagsOfTweet(id);
     }
     
-    @PostMapping("/{id}/like")
-    public void createLike(@RequestBody CredentialsDto credentialsDto, @PathVariable Long id) {
-    	tweetService.createLike(credentialsDto, id);
+    @GetMapping("/{id}/likes")
+    public List<UserResponseDto> getUsersWhoLiked(@PathVariable Long id) {
+    	return tweetService.getUsersWhoLiked(id);
     }
     
     @PostMapping("/{id}/reply")
-    public TweetResponseDto createReply(@PathVariable Long id, @RequestBody TweetRequestDto tweetRequestDto, CredentialsDto credentialsDto) {
-    	return tweetService.createReply(id, tweetRequestDto);
+    public TweetResponseDto createReply(@RequestBody TweetRequestDto tweetRequestDto, @PathVariable Long id) {
+    	return tweetService.createReply(tweetRequestDto, id);
+    }
+
+    @PostMapping("/{id}/like")
+    public void likeTweet(@RequestBody CredentialsDto credentialsDto, @PathVariable Long id) {
+        tweetService.likeTweet(credentialsDto, id);
     }
     
+    @GetMapping("/{id}/context")
+    public ContextDto getContext(@PathVariable Long id) {
+    	return tweetService.getContext(id);
+    }
     
 
 

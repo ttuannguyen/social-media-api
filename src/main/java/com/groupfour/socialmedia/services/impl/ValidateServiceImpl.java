@@ -44,7 +44,6 @@ public class ValidateServiceImpl implements ValidateService {
 	@Override	
     public boolean validateHashtagExists(String label) {
         Optional<Hashtag> optionalHashtag = hashtagRepository.findByLabel(label);
-        
         return optionalHashtag.isPresent();
     }
 
