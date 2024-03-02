@@ -1,9 +1,7 @@
 package com.groupfour.socialmedia.services.impl;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -381,19 +379,44 @@ public class TweetServiceImpl implements TweetService {
 		// target tweet
 		contextDto.setTarget(tweetMapper.entityToDto(tweet));
 
-		// tweets that the target tweet is a reply to
-		List<TweetResponseDto> before = new ArrayList<>();
-		List<TweetResponseDto> replies = getReplies(id);
-		for (TweetResponseDto reply : replies) {
-//			if (!reply.isDeleted()) {
-//				before.add(reply);
-//			}
-		}
+		List<Tweet> beforeTweets = new ArrayList<>();
+		List<Tweet> afterTweets = new ArrayList<>();
+		collectBeforeTweets(tweet, beforeTweets);
+		collectAfterTweets(tweet, afterTweets);
 
-		List<Tweet> afterTweets = tweetRepository.findByInReplyToAndDeletedFalse(tweet);
+		List<TweetResponseDto> beforeTweetDtos = tweetMapper.entitiesToDtos(beforeTweets);
+		List<TweetResponseDto> afterTweetDtos = tweetMapper.entitiesToDtos(afterTweets);
+		Collections.sort(beforeTweetDtos, Comparator.comparing(TweetResponseDto::getPosted));
+		Collections.sort(afterTweetDtos, Comparator.comparing(TweetResponseDto::getPosted));
+
+		contextDto.setBefore(beforeTweetDtos);
+		contextDto.setAfter(afterTweetDtos);
 		
-		return null; // placeholder
+		return contextDto;
 
+	}
+
+	// Recursive helper function
+	public void collectBeforeTweets(Tweet tweet, List<Tweet> allBeforeTweets) {
+		if (tweet.getInReplyTo() != null) {
+			if (!tweet.getInReplyTo().isDeleted()) {
+				allBeforeTweets.add(tweet.getInReplyTo());
+			}
+			collectBeforeTweets(tweet.getInReplyTo(), allBeforeTweets);
+		}
+	}
+
+	// Recursive helper function
+	public void collectAfterTweets(Tweet tweet, List<Tweet> allAfterTweets) {
+		List<Tweet> allReplies = tweet.getReplies();
+		if (allReplies != null) {
+			for (Tweet t : allReplies) {
+				if (!t.isDeleted()) {
+					allAfterTweets.add(t);
+				}
+				collectAfterTweets(t, allAfterTweets);
+			}
+		}
 	}
 
 }
