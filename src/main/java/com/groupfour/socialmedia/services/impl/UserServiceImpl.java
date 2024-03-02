@@ -222,20 +222,7 @@ public class UserServiceImpl implements UserService {
 		if (!userCredentials.getPassword().equals(credentials.getPassword()) || !username.equals(credentials.getUsername())) {
 			throw new NotAuthorizedException("You do not have authorization to delete this user.");
 		}
-		List<User> userFollowers = userToDelete.getFollowers();
-		List<User> userFollowing = userToDelete.getFollowing();
-		for (User follower : userFollowers) {
-			List<User> following = follower.getFollowing();
-			following.remove(userToDelete);
-			follower.setFollowing(following);
-			userRepository.saveAndFlush(follower);
-		}
-		for (User followed : userFollowing) {
-			List<User> followers = followed.getFollowers();
-			followers.remove(userToDelete);
-			followed.setFollowers(followers);
-			userRepository.saveAndFlush(followed);
-		}
+		
 		userToDelete.setDeleted(true);
 		return userMapper.entityToDto(userRepository.saveAndFlush(userToDelete));
 	}
